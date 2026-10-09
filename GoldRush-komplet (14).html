@@ -1,0 +1,2508 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>GoldRush</title>
+<!-- GoldRush v2-sale-7kr-boxes -->
+<meta name="theme-color" content="#8b0000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GoldRush">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow-x:hidden;background:#1a0000}
+body{font-family:system-ui,Arial,sans-serif;min-height:100vh;color:#fff;background:radial-gradient(ellipse at 50% -10%,#ff2222 0%,transparent 50%),radial-gradient(ellipse at 0% 50%,#aa0000 0%,transparent 45%),linear-gradient(180deg,#b30000 0%,#6b0000 35%,#3d0000 70%,#1a0000 100%);padding-bottom:76px;position:relative}
+.gold-rain{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.gold-drop{position:absolute;top:-30px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff7cc,#fbbf24 45%,#b45309);box-shadow:0 0 10px rgba(251,191,36,.6);animation:goldFall linear infinite;opacity:.8}
+@keyframes goldFall{0%{transform:translateY(0) rotate(0);opacity:0}10%{opacity:.85}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.shell{position:relative;z-index:2}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:linear-gradient(180deg,rgba(0,0,0,.55),transparent)}
+.icon-btn{width:38px;height:38px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid rgba(255,180,80,.3);color:#fbbf24;font-size:18px;display:flex;align-items:center;justify-content:center}
+.currency{display:flex;gap:8px}
+.currency-pill{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);border:1.5px solid #e8b923;border-radius:22px;padding:5px 10px 5px 7px;font-weight:800;font-size:13px;color:#ffe08a}
+.currency-pill .plus{width:18px;height:18px;border-radius:50%;background:linear-gradient(145deg,#ffe066,#e8b923);color:#3d0000;font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center}
+.hero{text-align:center;padding:8px 12px 12px}
+.hero-crown{font-size:44px;filter:drop-shadow(0 0 18px rgba(255,200,50,.8));animation:bob 2.8s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hero-sub{font-size:12px;color:#ffd56a;font-weight:700;margin-top:4px}
+.tabs{display:flex;gap:6px;padding:0 12px 12px;overflow-x:auto}
+.tab{flex-shrink:0;padding:8px 14px;border-radius:18px;font-size:12px;font-weight:800;border:1.5px solid rgba(232,185,35,.35);background:rgba(0,0,0,.35);color:#e8c060;cursor:pointer}
+.tab.active{background:linear-gradient(145deg,#ffe066,#e8b923);color:#3d0000;border-color:#fff3b0;box-shadow:0 0 14px rgba(232,185,35,.45)}
+.panel{display:none;padding:0 12px 16px}.panel.active{display:block}
+.games-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
+@media(min-width:520px){.games-grid{grid-template-columns:repeat(3,1fr);max-width:700px;margin:0 auto}}
+.game-card{background:linear-gradient(160deg,#5c0a0a,#2a0000);border:2px solid #e8b923;border-radius:14px;overflow:hidden;cursor:pointer}
+.card-art{height:88px;display:flex;align-items:center;justify-content:center;font-size:40px;background:radial-gradient(circle at 50% 30%,rgba(255,180,40,.3),transparent 65%),linear-gradient(180deg,#7a1212,#3d0505)}
+.card-body{padding:8px;text-align:center}
+.card-name{font-size:13px;font-weight:900;color:#ffe08a;margin-bottom:2px}
+.card-prize{font-size:10px;color:#e8b923;margin-bottom:7px}
+.spil-btn{width:100%;padding:8px 0;border:none;border-radius:16px;font-weight:900;font-size:12px;color:#fff;background:linear-gradient(180deg,#5eea8a,#16a34a);cursor:pointer;text-transform:uppercase}
+.box-card{background:linear-gradient(160deg,#1a1a2e,#0f0f1a);border:2px solid #a855f7;border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 0 20px rgba(168,85,247,.25)}
+.box-card.gold-tier{border-color:#e8b923;box-shadow:0 0 20px rgba(232,185,35,.3)}
+.box-card.red-tier{border-color:#ef4444;box-shadow:0 0 20px rgba(239,68,68,.3)}
+.box-header{display:flex;align-items:center;gap:12px;padding:14px}
+.box-icon{font-size:42px}
+.box-info{flex:1}
+.box-name{font-size:16px;font-weight:900;color:#e9d5ff}
+.box-card.gold-tier .box-name{color:#ffe08a}
+.box-card.red-tier .box-name{color:#fecaca}
+.box-price{font-size:13px;color:#c4b5fd;margin-top:2px}
+.box-card.gold-tier .box-price{color:#e8b923}
+.box-card.red-tier .box-price{color:#f87171}
+.box-open-btn{padding:10px 18px;border:none;border-radius:12px;font-weight:900;font-size:13px;color:#fff;background:linear-gradient(180deg,#c084fc,#7c3aed);cursor:pointer}
+.box-card.gold-tier .box-open-btn{background:linear-gradient(180deg,#ffe066,#e8b923);color:#3d0000}
+.box-card.red-tier .box-open-btn{background:linear-gradient(180deg,#f87171,#dc2626)}
+.box-odds{padding:0 14px 12px;font-size:11px;color:#94a3b8}
+.bonus-bar{margin:8px 12px 18px;background:rgba(0,0,0,.35);border:2px solid #e8b923;border-radius:12px;padding:12px}
+.bonus-title{font-size:13px;font-weight:900;color:#ffe08a}
+.bonus-desc{font-size:11px;color:#e8c060;margin:4px 0 8px}
+.progress-track{height:8px;background:#1a0000;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;width:40%;background:linear-gradient(90deg,#ffe066,#e8b923)}
+.gifts-row{display:flex;gap:5px;margin-top:8px;justify-content:center}
+.gifts-row span{font-size:18px;opacity:.35}.gifts-row span.filled{opacity:1}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:66px;background:linear-gradient(180deg,#3d0000,#1a0000);border-top:2px solid #e8b923;display:flex;justify-content:space-around;align-items:center;z-index:60}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:#a16207;font-size:9px;font-weight:800}
+.nav-item .nav-icon{font-size:20px}.nav-item.active{color:#ffe08a}
+.overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(10,0,0,.94);overflow-y:auto;padding:14px 12px 80px}
+.overlay.show{display:block}
+.overlay-box{max-width:420px;margin:0 auto;background:linear-gradient(165deg,#4a0a0a,#1f0000);border:2px solid #e8b923;border-radius:16px;padding:20px 14px}
+.overlay-box h1{text-align:center;font-size:22px;font-weight:900;color:#ffe08a;margin-bottom:8px}
+.intro-text{text-align:center;color:#e8c060;font-size:13px;margin-bottom:10px}
+button,.btn{padding:11px 20px;border:none;border-radius:12px;font-weight:900;font-size:13px;cursor:pointer}
+.btn-gold{background:linear-gradient(180deg,#ffe066,#e8b923);color:#3d0000}
+.btn-green{background:linear-gradient(180deg,#5eea8a,#16a34a);color:#fff}
+.btn-secondary{background:rgba(255,255,255,.08);color:#ffe08a;border:1px solid rgba(232,185,35,.35);margin-left:6px}
+.btn-purple{background:linear-gradient(180deg,#c084fc,#7c3aed);color:#fff}
+.actions{text-align:center;margin-top:14px}
+.buy-price{font-size:32px;font-weight:900;text-align:center;color:#ffe08a;margin:6px 0 14px}
+.case-stage{position:relative;height:140px;margin:16px 0;overflow:hidden;border-radius:12px;border:2px solid #a855f7;background:#0a0a12}
+.case-track{display:flex;position:absolute;left:0;top:0;height:100%;will-change:transform}
+.case-item{width:100px;height:140px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;border-right:1px solid rgba(255,255,255,.08);font-weight:900}
+.case-item .ci-emoji{font-size:28px;margin-bottom:4px}
+.case-item .ci-val{font-size:14px;color:#fff}
+.case-item.tier-low{background:linear-gradient(180deg,#334155,#1e293b)}
+.case-item.tier-mid{background:linear-gradient(180deg,#1e40af,#1e3a8a)}
+.case-item.tier-high{background:linear-gradient(180deg,#7c3aed,#5b21b6)}
+.case-item.tier-top{background:linear-gradient(180deg,#e8b923,#b45309)}
+.case-pointer{position:absolute;left:50%;top:0;bottom:0;width:3px;background:#fff;transform:translateX(-50%);z-index:5;box-shadow:0 0 12px #fff}
+.case-pointer::before{content:"▼";position:absolute;top:-2px;left:50%;transform:translateX(-50%);color:#fff;font-size:14px}
+.case-result{text-align:center;font-size:20px;font-weight:900;margin-top:12px;min-height:28px}
+.scratch-container{position:relative;width:280px;height:170px;margin:12px auto;border-radius:12px;overflow:hidden;border:2px solid #e8b923;touch-action:none}
+#prize-layer{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;background:linear-gradient(145deg,#fef9c3,#fbbf24);color:#1a0a05;text-align:center}
+#scratch-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+.grid-3x3{display:grid;grid-template-columns:repeat(3,88px);gap:7px;justify-content:center;margin:12px auto}
+.chests-grid{display:grid;grid-template-columns:repeat(2,125px);gap:10px;justify-content:center;margin:12px auto}
+.mini-grid{display:grid;grid-template-columns:repeat(3,84px);gap:8px;justify-content:center;margin:12px auto}
+.scratch-cell,.chest-cell,.mini-cell{position:relative;border-radius:8px;overflow:hidden;border:1.5px solid #e8b923;touch-action:none}
+.scratch-cell{width:88px;height:88px}.chest-cell{width:125px;height:105px}.mini-cell{width:84px;height:84px}
+.cell-prize{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;background:linear-gradient(145deg,#fef9c3,#fbbf24);color:#1a0a05;text-align:center}
+.cell-prize.win-highlight{background:linear-gradient(145deg,#86efac,#4ade80)!important;color:#14532d!important}
+.cell-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+.wheel-container{position:relative;width:240px;height:240px;margin:12px auto}
+#wheel-canvas{width:240px;height:240px;border-radius:50%}
+.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:24px;z-index:5}
+.result-text{text-align:center;font-size:17px;font-weight:900;margin-top:12px;min-height:26px}
+.result-win{color:#4ade80}.result-lose{color:#f87171}
+@keyframes screenShake{0%,100%{transform:translate(0,0)}15%{transform:translate(-12px,6px)}30%{transform:translate(14px,-8px)}45%{transform:translate(-10px,8px)}60%{transform:translate(10px,-4px)}75%{transform:translate(-6px,3px)}90%{transform:translate(4px,-2px)}}
+.shake{animation:screenShake .8s ease both}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
+.confetti-piece{position:absolute;top:-12px;animation:confettiFall linear forwards}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:0}}
+.footer-note{text-align:center;padding:6px;font-size:11px;color:#a16207;font-weight:700}
+
+.account-list{display:flex;flex-direction:column;gap:8px;margin:12px 0;max-height:220px;overflow-y:auto}
+.account-item{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:rgba(0,0,0,.35);border:1.5px solid #e8b923;border-radius:12px;cursor:pointer}
+.account-item:hover{background:rgba(232,185,35,.15)}
+.account-item .an{font-weight:900;color:#ffe08a}
+.account-item .ad{font-size:12px;color:#7dd3fc}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.shop-item{background:rgba(0,0,0,.4);border:2px solid #38bdf8;border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer}
+.shop-item .si-title{font-weight:900;color:#7dd3fc;font-size:15px}
+.shop-item .si-price{font-size:12px;color:#e8c060;margin-top:4px}
+.pay-toggle{display:flex;gap:8px;justify-content:center;margin:10px 0}
+.pay-toggle button{flex:1;padding:10px;border-radius:10px;border:2px solid #e8b923;background:rgba(0,0,0,.35);color:#e8c060;font-weight:800;cursor:pointer}
+.pay-toggle button.active{background:rgba(232,185,35,.3);color:#ffe08a;border-color:#ffe066}
+.pay-toggle button.dim-active{background:rgba(56,189,248,.25);color:#7dd3fc;border-color:#38bdf8}
+
+
+.avatar-img{width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid #e8b923}
+.avatar-lg{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid #e8b923;display:block;margin:0 auto 10px}
+.profile-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:rgba(0,0,0,.35);border:1px solid rgba(232,185,35,.35);border-radius:12px;margin:0 12px 10px}
+
+.feed-post{background:rgba(0,0,0,.4);border:1.5px solid rgba(232,185,35,.35);border-radius:14px;padding:12px;margin-bottom:12px}
+.feed-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.feed-av{width:36px;height:36px;border-radius:50%;object-fit:cover;border:1.5px solid #e8b923;background:rgba(232,185,35,.2)}
+.feed-user{font-weight:900;color:#ffe08a;font-size:13px}
+.feed-time{font-size:11px;color:#94a3b8}
+.feed-img{width:100%;border-radius:10px;max-height:280px;object-fit:cover;display:block}
+.feed-cap{color:#e8c060;font-size:13px;margin-top:8px;line-height:1.4}
+
+.feed-actions{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.feed-actions button{padding:8px 12px;border-radius:10px;border:1.5px solid #e8b923;background:rgba(0,0,0,.35);color:#ffe08a;font-weight:800;font-size:12px;cursor:pointer}
+.feed-actions button.liked{border-color:#f472b6;color:#f9a8d4;background:rgba(244,114,182,.15)}
+.feed-likes{font-size:12px;color:#f9a8d4;font-weight:700}
+
+.tabs{display:none!important}
+#panel-feed{max-width:100%;overflow-x:hidden}
+#feed-list{max-height:none;padding-bottom:20px}
+.feed-post{max-width:100%;overflow:hidden}
+.feed-img{width:100%;max-height:220px;object-fit:cover;border-radius:10px}
+.nav-avatar{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid #e8b923;display:block;margin:0 auto 2px}
+
+.premium-tag{display:inline-block;background:linear-gradient(90deg,#fbbf24,#f59e0b);color:#1a0000;font-size:10px;font-weight:900;padding:2px 7px;border-radius:6px;margin-left:4px}
+.lb-row{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:rgba(0,0,0,.35);border:1px solid rgba(232,185,35,.3);border-radius:10px;margin-bottom:6px}
+.lb-rank{font-weight:900;color:#fbbf24;width:28px}
+.lb-name{flex:1;color:#ffe08a;font-weight:800;font-size:13px}
+.lb-val{color:#7dd3fc;font-weight:800;font-size:13px}
+
+.slot-window{width:72px;height:80px;background:linear-gradient(180deg,#0f172a,#1e293b);border:3px solid #e8b923;border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 4px 12px rgba(0,0,0,.6)}
+.slot-reel{font-size:42px;line-height:1;user-select:none}
+</style>
+</head>
+<body>
+<div class="gold-rain" id="gold-rain"></div>
+<div class="shell">
+<div class="top-bar"><div class="currency"><div class="currency-pill"><span>🪙</span><span id="coin-balance">0</span></div><div class="currency-pill" onclick="openShop()" style="cursor:pointer"><span>💎</span><span id="diamond-balance">0</span><span class="plus">+</span></div></div></div>
+<div class="hero"><div class="hero-crown">👑</div><div class="hero-sub">GOLDRUSH</div></div>
+<div class="tabs">
+<div class="tab active" data-panel="spil">🎫 Spil</div>
+<div class="tab" data-panel="boxes">📦 Boxes</div>
+<div class="tab" data-panel="arcade">🎮 Arcade</div>
+<div class="tab" data-panel="feed">📷 Feed</div>
+<div class="tab" data-panel="hjul">🎡 Hjul</div>
+</div>
+<div class="panel active" id="panel-spil">
+<div class="games-grid">
+<div class="game-card" onclick="selectCard('Lynskrab',5,'mini')"><div class="card-art">⚡</div><div class="card-body"><div class="card-name">LYNSKRAB</div><div class="card-prize">🪙 5 kr</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Lynskrab',5,'mini')">Spil Nu</button></div></div>
+<div class="game-card" onclick="selectCard('Lyn-Match',5,'mini')"><div class="card-art">🎯</div><div class="card-body"><div class="card-name">LYN-MATCH</div><div class="card-prize">🪙 5 tokens</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Lyn-Match',5,'mini')">Spil Nu</button></div></div>
+<div class="game-card" onclick="selectCard('Skrabbelod',7,'scratch')"><div class="card-art" style="position:relative">🎫<div style="position:absolute;top:6px;right:6px;background:#ef4444;color:#fff;font-size:10px;font-weight:900;padding:3px 7px;border-radius:8px;box-shadow:0 2px 8px rgba(239,68,68,.5)">-30%</div></div><div class="card-body"><div class="card-name">GULD SKRAB</div><div class="card-prize" style="color:#ef4444!important;font-weight:900;font-size:13px">🔥 SAT NED · 7 kr <span style="text-decoration:line-through;opacity:.45;font-size:10px;color:#e8c060;font-weight:600">10 kr</span></div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Skrabbelod',7,'scratch')">Spil Nu</button></div></div>
+
+<div class="game-card" onclick="selectCard('Pyramide Spil',20,'grid')"><div class="card-art">🔺</div><div class="card-body"><div class="card-name">PYRAMIDE</div><div class="card-prize">🪙 20 kr</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Pyramide Spil',20,'grid')">Spil Nu</button></div></div>
+<div class="game-card" onclick="selectCard('Skattejagt',50,'chests')"><div class="card-art">🗺️</div><div class="card-body"><div class="card-name">SKATTEJAGT</div><div class="card-prize">🪙 50 chips</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Skattejagt',50,'chests')">Spil Nu</button></div></div>
+
+<div class="game-card" onclick="showWheelFromLobby()"><div class="card-art">🎡</div><div class="card-body"><div class="card-name">HJULET</div><div class="card-prize">🎁 Gratis</div><button class="spil-btn" onclick="event.stopPropagation();showWheelFromLobby()">Spil Nu</button></div></div>
+</div></div>
+<div class="panel" id="panel-boxes">
+<div class="box-card" onclick="openBoxBuy('mini')" style="border-color:#38bdf8"><div class="box-header"><div class="box-icon">📦</div><div class="box-info"><div class="box-name" style="color:#7dd3fc">Mini Box</div><div class="box-price" style="color:#38bdf8">🪙 10 kr · Altid gevinst</div></div><button class="box-open-btn" style="background:linear-gradient(180deg,#38bdf8,#0284c7)" onclick="event.stopPropagation();openBoxBuy('mini')">Åbn</button></div><div class="box-odds">Ofte over 10 kr · 2 · 5 · 8 · 10 · 12 · 15 · 20</div></div>
+<div class="box-card" onclick="openBoxBuy('bronze')"><div class="box-header"><div class="box-icon">📦</div><div class="box-info"><div class="box-name">Bronze Box</div><div class="box-price">🪙 25 kr · Altid gevinst</div></div><button class="box-open-btn" onclick="event.stopPropagation();openBoxBuy('bronze')">Åbn</button></div><div class="box-odds">Op til 100 kr · 5 · 10 · 15 · 25 · 50 · 100</div></div>
+<div class="box-card" onclick="openBoxBuy('silver')" style="border-color:#94a3b8"><div class="box-header"><div class="box-icon">🗃️</div><div class="box-info"><div class="box-name" style="color:#e2e8f0">Silver Box</div><div class="box-price" style="color:#94a3b8">🪙 50 kr · Større præmier</div></div><button class="box-open-btn" style="background:linear-gradient(180deg,#cbd5e1,#64748b)" onclick="event.stopPropagation();openBoxBuy('silver')">Åbn</button></div><div class="box-odds">Op til 100 kr · 10 · 20 · 30 · 50 · 75 · 100</div></div>
+<div class="box-card gold-tier" onclick="openBoxBuy('gold')"><div class="box-header"><div class="box-icon">🎁</div><div class="box-info"><div class="box-name">Gold Box</div><div class="box-price">🪙 75 kr · Premium</div></div><button class="box-open-btn" onclick="event.stopPropagation();openBoxBuy('gold')">Åbn</button></div><div class="box-odds">Op til 150 kr · 15 · 25 · 50 · 75 · 100 · 150</div></div>
+</div>
+<div class="panel" id="panel-arcade">
+<div class="games-grid">
+<div class="game-card" onclick="openSlots()"><div class="card-art">🎰</div><div class="card-body"><div class="card-name">TYVEKNÆGT</div><div class="card-prize">🪙 5 chips · slots</div><button class="spil-btn" onclick="event.stopPropagation();openSlots()">Spil</button></div></div>
+<div class="game-card" onclick="openArcadeWheel()"><div class="card-art">🎡</div><div class="card-body"><div class="card-name">LYKKEHJUL</div><div class="card-prize">🪙 5 chips · 1/3 dage</div><button class="spil-btn" onclick="event.stopPropagation();openArcadeWheel()">Spin</button></div></div>
+<div class="game-card" onclick="selectCard('Plinko',15,'plinko')"><div class="card-art">🔵</div><div class="card-body"><div class="card-name">PLINKO</div><div class="card-prize">🪙 15 kr · Drop bold</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Plinko',15,'plinko')">Spil Nu</button></div></div>
+<div class="game-card" onclick="selectCard('Catch Coins',20,'catch')"><div class="card-art">🪙</div><div class="card-body"><div class="card-name">CATCH COINS</div><div class="card-prize">🪙 20 kr · +1 kr / mønt</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Catch Coins',20,'catch')">Spil Nu</button></div></div>
+<div class="game-card" onclick="selectCard('Tap Race',15,'tap')"><div class="card-art">👆</div><div class="card-body"><div class="card-name">TAP RACE</div><div class="card-prize">🪙 15 kr · 8 sek · +1 / 5 taps</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Tap Race',15,'tap')">Spil Nu</button></div></div>
+<div class="game-card" onclick="selectCard('Lucky Dice',8,'dice')"><div class="card-art">🎲</div><div class="card-body"><div class="card-name">LUCKY DICE</div><div class="card-prize">🪙 8 kr · 2 terninger</div><button class="spil-btn" onclick="event.stopPropagation();selectCard('Lucky Dice',8,'dice')">Spil Nu</button></div></div>
+</div>
+<p style="text-align:center;color:#e8c060;font-size:12px;margin-top:12px">Skill & held · mobil-venligt</p>
+</div>
+<div class="panel" id="panel-feed">
+<div style="padding:0 0 12px">
+  <div style="background:rgba(0,0,0,.35);border:1.5px solid #e8b923;border-radius:14px;padding:12px;margin-bottom:12px">
+    <p style="color:#e8c060;font-size:12px;margin-bottom:8px;text-align:center">Del et billede med alle spillere</p>
+    <input id="feed-caption" placeholder="Skriv en tekst til dit billede..." maxlength="120" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e8b923;background:#1a0000;color:#ffe08a;font-size:14px;margin-bottom:8px">
+    <label style="display:block;text-align:center">
+      <span class="btn-gold" style="display:inline-block;padding:10px 18px;cursor:pointer">📷 Vælg billede og post (med tekst)</span>
+      <input type="file" accept="image/*" id="feed-image-input" style="display:none" onchange="postToFeed(this)">
+    </label>
+  </div>
+  <div id="feed-list" style="padding-bottom:24px"></div>
+</div>
+</div>
+<div class="panel" id="panel-leader">
+<div style="padding:4px 0 20px">
+  <h2 style="text-align:center;color:#fbbf24;font-size:16px;margin-bottom:10px">🏆 Leaderboard</h2>
+  <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;justify-content:center">
+    <button type="button" class="btn-gold" style="padding:8px 12px;font-size:12px" onclick="renderLeaderboard('gambled')">Mest gamblet</button>
+    <button type="button" class="btn-purple" style="padding:8px 12px;font-size:12px" onclick="renderLeaderboard('diamonds')">Flest 💎</button>
+    <button type="button" class="btn-green" style="padding:8px 12px;font-size:12px" onclick="renderLeaderboard('tokens')">Flest chips</button>
+  </div>
+  <div id="leader-list"></div>
+</div>
+</div>
+<div class="panel" id="panel-hjul"><div style="text-align:center;padding:24px"><div style="font-size:48px">🎡</div><p style="color:#e8c060;margin:12px 0">Prøv lykkehjulet</p><button class="btn-purple" onclick="showWheelFromLobby()">Spin nu</button></div></div>
+<div class="bonus-bar"><div class="bonus-title">👑 BONUS</div><div class="bonus-desc">Saml 5 gaver</div><div class="progress-track"><div class="progress-fill"></div></div><div class="gifts-row"><span class="filled">🎁</span><span class="filled">🎁</span><span class="filled">🎁</span><span class="filled">🎁</span><span>🎁</span></div></div>
+<div class="footer-note">Spil ansvarligt · 18+</div>
+</div>
+<div class="bottom-nav">
+<div class="nav-item active" onclick="goTab('spil')"><span class="nav-icon">🏠</span>Hjem</div>
+<div class="nav-item" onclick="goTab('boxes')"><span class="nav-icon">📦</span>Boxes</div>
+<div class="nav-item" onclick="goTab('arcade')"><span class="nav-icon">🎮</span>Arcade</div>
+<div class="nav-item" onclick="goTab('feed')"><span class="nav-icon">📷</span>Feed</div>
+<div class="nav-item" onclick="goTab('leader')"><span class="nav-icon">🏆</span>Top</div>
+<div class="nav-item" onclick="openShop()"><span class="nav-icon">🛒</span>Butik</div>
+<div class="nav-item" id="nav-profile-item" onclick="openProfileOrLogin()"><span class="nav-icon" id="nav-profile-icon">👤</span>Profil</div>
+</div>
+<!-- PROFILE -->
+<div id="profile-overlay" class="overlay">
+  <div class="overlay-box">
+    <h1>👤 Profil</h1>
+    <img id="profile-avatar" class="avatar-lg" src="" alt="" style="display:none">
+    <div id="profile-avatar-placeholder" style="width:72px;height:72px;border-radius:50%;background:rgba(232,185,35,.2);border:2px solid #e8b923;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:32px">👤</div>
+    <p id="profile-name" style="text-align:center;font-weight:900;color:#ffe08a;font-size:18px"></p>
+    <p id="profile-stats" style="text-align:center;color:#7dd3fc;font-size:13px;margin:6px 0 12px"></p>
+    <label style="display:block;text-align:center;margin-bottom:12px">
+      <span class="btn-gold" style="display:inline-block;padding:10px 16px;cursor:pointer">📷 Skift billede</span>
+      <input type="file" accept="image/*" id="avatar-input" style="display:none" onchange="onAvatarSelected(this)">
+    </label>
+    <div class="actions" style="display:flex;flex-direction:column;gap:8px">
+      <button type="button" class="btn-secondary" onclick="document.getElementById('profile-overlay').classList.remove('show')">Luk</button>
+      <button type="button" class="btn-purple" onclick="logoutAccount()">Log ud</button>
+      <button type="button" style="padding:12px;border-radius:10px;border:2px solid #ef4444;background:#7f1d1d;color:#fecaca;font-weight:800;cursor:pointer" onclick="deleteMyAccount()">Slet min konto</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT -->
+<div id="account-overlay" class="overlay show">
+  <div class="overlay-box">
+    <h1>💎 GoldRush</h1>
+    <p class="intro-text">Log ind eller opret konto</p>
+    <div class="account-list" id="account-list"></div>
+    <div id="auth-wrap" style="margin-top:14px">
+      <input id="auth-name" placeholder="Brugernavn" maxlength="20" style="width:100%;padding:12px;border-radius:10px;border:2px solid #e8b923;background:#1a0000;color:#ffe08a;font-size:15px;margin-bottom:8px">
+      <input id="auth-pass" placeholder="Adgangskode" type="password" style="width:100%;padding:12px;border-radius:10px;border:2px solid #e8b923;background:#1a0000;color:#ffe08a;font-size:15px;margin-bottom:8px">
+      <div style="display:flex;gap:8px">
+        <button class="btn-green" style="flex:1" type="button" onclick="loginAccount()">Log ind</button>
+        <button class="btn-gold" style="flex:1" type="button" onclick="registerAccount()">Opret</button>
+      </div>
+      <p style="text-align:center;color:#94a3b8;font-size:11px;margin-top:10px">Alle kan oprette konto. Navne med "snorre" er admin og kan give chips.</p>
+    </div>
+    <div id="admin-panel" style="display:none;margin-top:16px;border-top:1px solid rgba(232,185,35,.3);padding-top:12px">
+      <h2 style="color:#fbbf24;font-size:14px;margin-bottom:8px">👑 Admin</h2>
+      <p style="color:#94a3b8;font-size:11px;margin-bottom:8px;text-align:center">Giv chips til andre spillere</p>
+      <select id="admin-user-select" style="width:100%;padding:10px;border-radius:10px;border:2px solid #e8b923;background:#1a0000;color:#ffe08a;margin-bottom:8px"></select>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <input id="admin-token-amount" type="number" min="1" value="50" style="flex:1;padding:10px;border-radius:10px;border:2px solid #e8b923;background:#1a0000;color:#ffe08a">
+        <button type="button" class="btn-gold" style="padding:10px 14px" onclick="adminGiveTokens()">Giv chips</button>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:8px">
+        <input id="admin-dia-amount" type="number" min="1" value="10" style="flex:1;padding:10px;border-radius:10px;border:2px solid #38bdf8;background:#1a0000;color:#7dd3fc">
+        <button type="button" class="btn-purple" style="padding:10px 14px" onclick="adminGiveDiamonds()">Giv 💎</button>
+      </div>
+      <h2 style="color:#4ade80;font-size:14px;margin:14px 0 8px">🔔 Aktivitet (gevinst & forbrug)</h2>
+      <div id="win-log" style="max-height:140px;overflow-y:auto"></div>
+      <button type="button" class="btn-secondary" style="width:100%;margin-top:8px;padding:8px" onclick="clearWinLog()">Ryd log</button>
+    </div>
+  </div>
+</div>
+
+</div>
+<!-- SHOP -->
+<div id="shop-overlay" class="overlay">
+  <div class="overlay-box" style="max-width:440px">
+    <h1>🛒 Butik</h1>
+    <p class="intro-text" id="shop-balance-line">💎 0 · 🪙 0</p>
+
+    <h2 style="color:#7dd3fc;font-size:14px;margin:12px 0 6px">💎 Køb diamanter</h2>
+    <div class="shop-grid">
+      <div class="shop-item" onclick="buyDiamonds(5,15)"><div class="si-title">5 💎</div><div class="si-price">15 tokens</div></div>
+      <div class="shop-item" onclick="buyDiamonds(15,35)"><div class="si-title">15 💎</div><div class="si-price">35 tokens</div></div>
+      <div class="shop-item" onclick="buyDiamonds(40,80)"><div class="si-title">40 💎</div><div class="si-price">80 tokens</div></div>
+      <div class="shop-item" onclick="buyDiamonds(100,150)"><div class="si-title">100 💎</div><div class="si-price">150 tokens</div></div>
+    </div>
+
+    <h2 style="color:#ffe08a;font-size:14px;margin:14px 0 6px">🪙 Veksle diamanter → tokens</h2>
+    <p style="text-align:center;color:#94a3b8;font-size:11px;margin-bottom:8px">1 💎 = 1 token</p>
+    <div class="shop-grid">
+      <div class="shop-item" style="border-color:#e8b923" onclick="exchangeDiamonds(5)"><div class="si-title" style="color:#ffe08a">5 💎 → 5 tokens</div></div>
+      <div class="shop-item" style="border-color:#e8b923" onclick="exchangeDiamonds(20)"><div class="si-title" style="color:#ffe08a">20 💎 → 20 tokens</div></div>
+      <div class="shop-item" style="border-color:#e8b923" onclick="exchangeDiamonds(50)"><div class="si-title" style="color:#ffe08a">50 💎 → 50 tokens</div></div>
+      <div class="shop-item" style="border-color:#e8b923" onclick="exchangeDiamonds(100)"><div class="si-title" style="color:#ffe08a">100 💎 → 100 tokens</div></div>
+    </div>
+
+    <h2 style="color:#fbbf24;font-size:14px;margin:14px 0 6px">🎁 Boost & hjul</h2>
+    <div class="shop-item" onclick="activateGoldRush()" style="border-color:#fbbf24;margin-bottom:8px">
+      <div class="si-title" style="color:#fbbf24">🔥 GOLDRUSH · 60 sek</div>
+      <div class="si-price">Dobbelt præmier · 20 💎</div>
+    </div>
+    <div class="shop-item" onclick="buyPremium()" style="border-color:#a855f7;margin-bottom:8px">
+      <div class="si-title" style="color:#e9d5ff">⭐ GoldRush Premium</div>
+      <div class="si-price">10 chips / uge · tag + 1,5× gevinster + 5 💎/uge</div>
+    </div>
+    <div class="shop-item" onclick="openDiamondWheel()" style="border-color:#a855f7;margin-bottom:8px">
+      <div class="si-title" style="color:#e9d5ff">💎 Diamant-hjul</div>
+      <div class="si-price">Spin for diamanter · 10 💎</div>
+    </div>
+
+    <h2 style="color:#f472b6;font-size:14px;margin:14px 0 6px">🎀 Gaver</h2>
+    <p style="text-align:center;color:#94a3b8;font-size:11px;line-height:1.4;margin-bottom:8px">Når du skraber lodder er der en lille chance for at finde en gave.<br>Gaver giver ekstra diamanter.</p>
+    <div id="gift-inventory" style="text-align:center;color:#e8c060;font-size:13px;min-height:24px">Ingen gaver endnu</div>
+    <div style="text-align:center;margin-top:8px">
+      <button class="btn-purple" id="open-gift-btn" onclick="openGift()" style="display:none">Åbn 1 gave</button>
+    </div>
+
+    <div class="actions" style="margin-top:16px"><button class="btn-secondary" onclick="document.getElementById('shop-overlay').classList.remove('show')">Luk</button></div>
+  </div>
+</div>
+
+<!-- DIAMOND WHEEL -->
+<div id="dwheel-overlay" class="overlay">
+  <div class="overlay-box">
+    <h1>💎 Diamant-hjul</h1>
+    <p class="intro-text">Kost: 10 💎 · Vind diamanter tilbage</p>
+    <div class="wheel-container"><div class="wheel-pointer">▼</div><canvas id="dwheel-canvas" width="240" height="240"></canvas></div>
+    <div class="result-text" id="dwheel-result"></div>
+    <div class="actions">
+      <button id="dwheel-spin-btn" class="btn-purple" onclick="spinDiamondWheel()">Spin · 10 💎</button>
+      <button class="btn-secondary" onclick="document.getElementById('dwheel-overlay').classList.remove('show')">Luk</button>
+    </div>
+  </div>
+</div>
+
+      <div class="shop-item" onclick="buyDiamonds(15,35)"><div class="si-title">15 💎</div><div class="si-price">35 tokens</div></div>
+      <div class="shop-item" onclick="buyDiamonds(40,80)"><div class="si-title">40 💎</div><div class="si-price">80 tokens</div></div>
+      <div class="shop-item" onclick="buyDiamonds(100,150)"><div class="si-title">100 💎</div><div class="si-price">150 tokens</div></div>
+    </div>
+    <div class="shop-item" onclick="activateGoldRush()" style="grid-column:1/-1;border-color:#fbbf24;margin-top:4px">
+      <div class="si-title" style="color:#fbbf24">🔥 GOLDRUSH · 60 sek</div>
+      <div class="si-price">Dobbelt præmier · 20 💎</div>
+    </div>
+    <p style="text-align:center;color:#94a3b8;font-size:11px;margin-top:8px">Spil og tjen: 5 kr = 1💎 · 10 kr = 2💎 · 15 kr = 3💎 osv.</p>
+    <div class="actions"><button class="btn-secondary" onclick="document.getElementById('shop-overlay').classList.remove('show')">Luk</button></div>
+  </div>
+</div>
+
+<div id="terms-overlay" class="overlay"><div class="overlay-box"><h1>👑 Velkommen</h1><p class="intro-text">Accepter betingelserne. Spil ansvarligt. 18+.</p><div class="actions"><button class="btn-gold" onclick="acceptTerms()">Jeg accepterer</button></div></div></div>
+<div id="buy-overlay" class="overlay"><div class="overlay-box"><h1 id="buy-name">Bekræft</h1>
+<div id="qty-wrap" style="display:none;text-align:center;margin:10px 0 6px">
+<p style="color:#e8c060;font-size:12px;margin-bottom:8px">Vælg antal lodder</p>
+<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+<button type="button" class="qty-btn" data-q="1" onclick="setQty(1)" style="min-width:64px;padding:10px 12px;border-radius:12px;border:2px solid #e8b923;background:rgba(0,0,0,.35);color:#ffe08a;font-weight:900;cursor:pointer">1</button>
+<button type="button" class="qty-btn" data-q="2" onclick="setQty(2)" style="min-width:64px;padding:10px 12px;border-radius:12px;border:2px solid #e8b923;background:rgba(0,0,0,.35);color:#ffe08a;font-weight:900;cursor:pointer">2</button>
+<button type="button" class="qty-btn" data-q="3" onclick="setQty(3)" style="min-width:72px;padding:10px 12px;border-radius:12px;border:2px solid #22c55e;background:rgba(34,197,94,.15);color:#4ade80;font-weight:900;cursor:pointer">3 · spar</button>
+</div>
+<p id="qty-hint" style="color:#4ade80;font-size:11px;margin-top:8px;min-height:16px"></p>
+</div>
+<div class="buy-price" id="buy-price">10 kr</div>
+<div class="pay-toggle" id="pay-toggle" style="display:none">
+  <button type="button" id="pay-coins-btn" class="active" onclick="setPayMode('coins')">🪙 Tokens</button>
+  <button type="button" id="pay-diamonds-btn" onclick="setPayMode('diamonds')">💎 Diamanter</button>
+</div>
+<p id="pay-hint" style="text-align:center;font-size:12px;color:#7dd3fc;min-height:18px"></p>
+<div class="actions"><button class="btn-green" onclick="confirmBuy()">Bekræft & start</button><button class="btn-secondary" onclick="closeOverlays()">Tilbage</button></div></div></div>
+<div id="play-overlay" class="overlay"><div class="overlay-box" id="play-box">
+<h1 id="play-title">Spil</h1><p class="intro-text" id="play-instruction"></p>
+<div id="scratch-area" style="display:none"><div class="scratch-container"><div id="prize-layer">...</div><canvas id="scratch-canvas" width="280" height="170"></canvas></div></div>
+<div id="grid-area" style="display:none"><div class="grid-3x3" id="grid-3x3"></div></div>
+<div id="chests-area" style="display:none"><div class="chests-grid" id="chests-grid"></div></div>
+<div id="mini-area" style="display:none"><div class="mini-grid" id="mini-grid"></div></div>
+<div id="plinko-area" style="display:none"><canvas id="plinko-canvas" width="300" height="380" style="display:block;margin:0 auto;border-radius:10px;border:2px solid #e8b923;background:#0f172a;max-width:100%"></canvas><div style="text-align:center;margin-top:8px"><button id="plinko-drop-btn" class="btn-purple" onclick="dropPlinkoBall()">Drop bold</button></div></div>
+
+
+
+
+<div id="slots-area" style="display:none;text-align:center;padding:12px 8px">
+<div style="background:linear-gradient(180deg,#3d0a0a,#1a0000);border:3px solid #e8b923;border-radius:16px;padding:18px 12px;box-shadow:0 0 24px rgba(232,185,35,.25),inset 0 0 30px rgba(0,0,0,.5)">
+<div style="color:#fbbf24;font-weight:900;font-size:14px;letter-spacing:2px;margin-bottom:12px">🎰 ENARMET TYVEKNÆGT</div>
+<div id="slots-reels" style="display:flex;justify-content:center;gap:8px;margin:8px 0 16px">
+<div class="slot-window"><span class="slot-reel">🍒</span></div>
+<div class="slot-window"><span class="slot-reel">🍋</span></div>
+<div class="slot-window"><span class="slot-reel">🔔</span></div>
+</div>
+<div id="slots-msg" style="color:#e8c060;font-weight:800;min-height:22px;font-size:13px;margin-bottom:14px">Kost: 5 chips</div>
+<button id="slots-spin-btn" type="button" onclick="spinSlots()" style="min-width:160px;padding:14px 28px;border:none;border-radius:12px;background:linear-gradient(180deg,#fbbf24,#b45309);color:#1a0000;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 4px 0 #78350f">SPIN · 5 chips</button>
+</div>
+<div style="margin-top:14px">
+<button type="button" class="btn-secondary" onclick="closeSlots()">← Tilbage</button>
+</div>
+</div>
+<div id="catch-area" style="display:none">
+<canvas id="catch-canvas" width="300" height="400" style="display:block;margin:0 auto;border-radius:10px;border:2px solid #e8b923;background:linear-gradient(180deg,#1e3a5f,#0f172a);width:100%;max-width:320px;touch-action:none"></canvas>
+<div style="text-align:center;margin-top:8px;color:#ffe08a;font-weight:800" id="catch-score">Mønter: 0 · Tid: 20</div>
+<p style="text-align:center;font-size:12px;color:#e8c060;margin-top:4px">Træk kurven · fang mønterne</p>
+<div style="text-align:center;margin-top:8px"><button id="catch-start-btn" class="btn-purple" onclick="catchStart()" style="min-width:140px;padding:14px 28px">Start</button></div>
+</div>
+<div id="tap-area" style="display:none">
+<div style="text-align:center;padding:20px 10px">
+<div id="tap-timer" style="font-size:18px;color:#e8c060;font-weight:800;margin-bottom:8px">Tid: 8</div>
+<div id="tap-count" style="font-size:48px;font-weight:900;color:#ffe08a;margin:12px 0">0</div>
+<div id="tap-earn" style="color:#4ade80;font-weight:800;margin-bottom:16px">+0 kr</div>
+<button id="tap-btn" type="button" style="width:160px;height:160px;border-radius:50%;border:4px solid #e8b923;background:linear-gradient(145deg,#fbbf24,#b45309);color:#1a0000;font-size:28px;font-weight:900;cursor:pointer;box-shadow:0 8px 0 #78350f" ontouchstart="event.preventDefault();tapHit()" onclick="tapHit()">TAP!</button>
+<div style="margin-top:16px"><button id="tap-start-btn" class="btn-purple" onclick="tapStart()" style="min-width:140px;padding:14px 28px">Start</button></div>
+</div>
+</div>
+<div id="dice-area" style="display:none">
+<div style="text-align:center;padding:16px">
+<p style="color:#e8c060;margin-bottom:12px">Slå 2 terninger · sum ≥ 8 = gevinst</p>
+<div style="font-size:64px;margin:16px 0;min-height:80px" id="dice-faces">🎲 🎲</div>
+<div id="dice-sum" style="font-size:22px;font-weight:900;color:#ffe08a;min-height:28px"></div>
+<div style="margin-top:14px"><button id="dice-roll-btn" class="btn-purple" onclick="diceRoll()" style="min-width:140px;padding:14px 28px">Slå</button></div>
+</div>
+</div>
+<div id="box-area" style="display:none"><div class="case-stage"><div class="case-pointer"></div><div class="case-track" id="case-track"></div></div><div class="case-result" id="case-result"></div><div style="text-align:center;margin-top:10px"><button id="case-spin-btn" class="btn-purple" onclick="spinCase()">Åbn box</button></div></div>
+<div class="result-text" id="result-text"></div>
+<div class="actions" id="play-actions"><button class="btn-secondary" onclick="closeOverlays()">Tilbage</button></div>
+</div></div>
+<div id="wheel-overlay" class="overlay"><div class="overlay-box"><h1>🎡 Lykkehjulet</h1><p class="intro-text" id="wheel-intro">Spin!</p><div class="wheel-container"><div class="wheel-pointer">▼</div><canvas id="wheel-canvas" width="240" height="240"></canvas></div><div class="result-text" id="wheel-result"></div><div class="actions"><button id="spin-btn" class="btn-purple" onclick="spinWheel()">Spin</button><button class="btn-secondary" onclick="closeOverlays()">Tilbage</button></div></div></div>
+
+<script>
+(function(){var L=document.getElementById("gold-rain");for(var i=0;i<30;i++){var d=document.createElement("div");d.className="gold-drop";d.style.left=Math.random()*100+"%";var s=5+Math.random()*10;d.style.width=s+"px";d.style.height=s+"px";d.style.animationDuration=(3.5+Math.random()*6)+"s";d.style.animationDelay=Math.random()*7+"s";L.appendChild(d)}})();
+var selectedName="",selectedPrice=0,selectedType="",buyMode="game",currentBox=null,caseSpinning=false,buyQty=1,ticketsLeft=0,unitPrice=0;
+var isDrawing=false,canvas,ctx,scratched=false,gameWon=false,cellCanvases=[],cellRevealed=[],currentCell=null;
+var gridPrizes=[],chestPrizes=[],miniPrizes=[],lastWheelShown=false,wheelSpinning=false,wheelAngle=0;
+
+var freeReplay=false,freeSkattejagt=false,isFirstPlay=true,coinBalance=0,diamondBalance=0;
+var currentAccount=null,payMode="coins",goldRushBoostUntil=0;
+
+var STORAGE_KEY="goldrush_accounts_v3";
+try{
+  localStorage.removeItem("goldrush_accounts_v1");
+  localStorage.removeItem("goldrush_accounts_v2");
+  localStorage.removeItem("goldrush_session_v1");
+  localStorage.removeItem("goldrush_session_v2");
+}catch(e){}
+
+var SESSION_KEY="goldrush_session_v3";
+var PENDING_KEY="goldrush_pending_v1";
+var WIN_LOG_KEY="goldrush_winlog_v1";
+function loadWinLog(){try{return JSON.parse(localStorage.getItem(WIN_LOG_KEY)||"[]")}catch(e){return []}}
+function saveWinLog(list){localStorage.setItem(WIN_LOG_KEY,JSON.stringify(list))}
+function notifyAdminSpend(user, text, amount){
+  var list=loadWinLog();
+  list.unshift({user:user,text:"💸 "+text,amount:amount||0,time:Date.now(),type:"spend"});
+  if(list.length>80)list=list.slice(0,80);
+  saveWinLog(list);
+}
+function notifyAdminWin(user, text, amount){
+  var list=loadWinLog();
+  list.unshift({user:user,text:text,amount:amount||0,time:Date.now()});
+  if(list.length>50)list=list.slice(0,50);
+  saveWinLog(list);
+}
+function renderWinLog(){
+  var el=document.getElementById("win-log");
+  if(!el)return;
+  var list=loadWinLog();
+  if(!list.length){el.innerHTML='<p style="color:#94a3b8;font-size:12px;text-align:center">Ingen gevinster endnu</p>';return}
+  var html="";
+  for(var i=0;i<Math.min(list.length,20);i++){
+    var w=list[i];
+    var t=new Date(w.time);
+    var ts=t.getHours().toString().padStart(2,"0")+":"+t.getMinutes().toString().padStart(2,"0");
+    var border=w.type==="spend"?"#f59e0b":"#22c55e";
+    var col=w.type==="spend"?"#fbbf24":"#4ade80";
+    html+='<div style="background:rgba(0,0,0,.35);border:1px solid '+border+';border-radius:8px;padding:8px;margin-bottom:6px">';
+    html+='<div style="color:'+col+';font-weight:800;font-size:12px">'+w.user+' · '+ts+'</div>';
+    html+='<div style="color:#e8c060;font-size:12px">'+w.text+(w.amount?(" ("+w.amount+")"):"")+'</div>';
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+function clearWinLog(){saveWinLog([]);renderWinLog()}
+
+
+function loadAccounts(){
+  try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]")}catch(e){return []}
+}
+function saveAccounts(list){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(list));
+}
+function loadPending(){
+  try{return JSON.parse(localStorage.getItem(PENDING_KEY)||"[]")}catch(e){return []}
+}
+function savePending(list){
+  localStorage.setItem(PENDING_KEY,JSON.stringify(list));
+}
+function isAdminName(name){
+  return String(name||"").toLowerCase().indexOf("snorre")>=0;
+}
+function saveCurrentAccount(){
+  if(!currentAccount)return;
+  var list=loadAccounts();
+  for(var i=0;i<list.length;i++){
+    if(list[i].name===currentAccount.name){
+      list[i].diamonds=diamondBalance;
+      list[i].coins=coinBalance;
+      list[i].gifts=currentAccount.gifts||0;
+      list[i].firstPlay=isFirstPlay;
+      list[i].admin=!!currentAccount.admin;
+      list[i].freeDwheel=currentAccount.freeDwheel||0;
+      list[i].boostUntil=goldRushBoostUntil||0;
+      list[i].avatar=currentAccount.avatar||null;
+      list[i].premiumUntil=currentAccount.premiumUntil||0;
+      list[i].premiumGemsDue=!!currentAccount.premiumGemsDue;
+      list[i].premiumWeekStart=currentAccount.premiumWeekStart||0;
+      list[i].gambled=currentAccount.gambled||0;
+      list[i].lastWheel=currentAccount.lastWheel||0;
+      list[i].adminStarterDone=!!currentAccount.adminStarterDone;
+      break;
+    }
+  }
+  saveAccounts(list);
+  try{localStorage.setItem(SESSION_KEY,currentAccount.name)}catch(e){}
+}
+function updateCoins(d){
+  coinBalance=Math.max(0,coinBalance+(d||0));
+  var el=document.getElementById("coin-balance");
+  if(el)el.textContent=coinBalance.toLocaleString("da-DK");
+  saveCurrentAccount();
+}
+function updateDiamonds(d){
+  diamondBalance=Math.max(0,diamondBalance+(d||0));
+  var el=document.getElementById("diamond-balance");
+  if(el)el.textContent=diamondBalance.toLocaleString("da-DK");
+  saveCurrentAccount();
+}
+function refreshBalances(){
+  var c=document.getElementById("coin-balance");
+  var d=document.getElementById("diamond-balance");
+  if(c)c.textContent=coinBalance.toLocaleString("da-DK");
+  if(d)d.textContent=diamondBalance.toLocaleString("da-DK");
+}
+function renderAccountList(){
+  var list=loadAccounts();
+  var el=document.getElementById("account-list");
+  if(!el)return;
+  if(!list.length){
+    el.innerHTML='<p style="text-align:center;color:#94a3b8;font-size:13px">Ingen konti endnu – opret din egen nedenunder</p>';
+    return;
+  }
+  var html="";
+  for(var i=0;i<list.length;i++){
+    var a=list[i];
+    var safe=String(a.name).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+    var badge=a.admin?' <span style="color:#fbbf24">👑</span>':'';
+    html+='<div class="account-item">';
+    html+='<div class="an">👤 '+safe+badge+'</div>';
+    html+='<div class="ad">💎 '+(a.diamonds||0)+' · 🪙 '+(a.coins||0)+' tokens</div>';
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+function registerAccount(){
+  var name=(document.getElementById("auth-name").value||"").trim();
+  var pass=(document.getElementById("auth-pass").value||"");
+  if(!name){alert("Skriv et brugernavn");return}
+  if(pass.length<2){alert("Vælg en adgangskode (min. 2 tegn)");return}
+  var list=loadAccounts();
+  for(var i=0;i<list.length;i++){
+    if(list[i].name.toLowerCase()===name.toLowerCase()){alert("Navnet er optaget – log ind i stedet");return}
+  }
+  var admin=isAdminName(name);
+  var acc={name:name,pass:pass,diamonds:admin?10000:0,coins:admin?10000:0,firstPlay:true,gifts:0,admin:admin};
+  list.push(acc);
+  saveAccounts(list);
+  document.getElementById("auth-name").value="";
+  document.getElementById("auth-pass").value="";
+  renderAccountList();
+
+if(!restoreSession()){renderAccountList();}
+
+  enterAccount(acc);
+}
+function loginAccount(){
+  var name=(document.getElementById("auth-name").value||"").trim();
+  var pass=(document.getElementById("auth-pass").value||"");
+  if(!name){alert("Skriv brugernavn");return}
+  var list=loadAccounts();
+  var acc=null;
+  for(var i=0;i<list.length;i++){
+    if(list[i].name.toLowerCase()===name.toLowerCase()){acc=list[i];break}
+  }
+  if(!acc){alert("Konto findes ikke – opret den først");return}
+  if(String(acc.pass)!==String(pass)){alert("Forkert adgangskode");return}
+  // refresh admin flag if name contains snorre
+  acc.admin=isAdminName(acc.name);
+  enterAccount(acc);
+}
+function enterAccount(acc){
+  currentAccount=acc;
+  diamondBalance=acc.diamonds||0;
+  coinBalance=acc.coins||0;
+  if(acc.gifts==null)acc.gifts=0;
+  currentAccount.freeDwheel=acc.freeDwheel||0;
+  currentAccount.avatar=acc.avatar||null;
+  currentAccount.premiumUntil=acc.premiumUntil||0;
+  currentAccount.premiumGemsDue=!!acc.premiumGemsDue;
+  currentAccount.premiumWeekStart=acc.premiumWeekStart||0;
+  currentAccount.gambled=acc.gambled||0;
+  currentAccount.lastWheel=acc.lastWheel||0;
+  currentAccount.adminStarterDone=!!acc.adminStarterDone;
+  claimPremiumWeeklyGems();
+  isFirstPlay=acc.firstPlay!==false;
+  currentAccount.admin=!!acc.admin||isAdminName(acc.name);
+  if(currentAccount.admin && !acc.adminStarterDone){
+    acc.coins=10000;acc.diamonds=10000;acc.adminStarterDone=true;
+    coinBalance=10000;diamondBalance=10000;
+    currentAccount.adminStarterDone=true;
+    currentAccount.coins=10000;currentAccount.diamonds=10000;
+  }
+  if(acc.boostUntil && acc.boostUntil>Date.now()){
+    goldRushBoostUntil=acc.boostUntil;
+    updateGoldRushUI();
+    var t=setInterval(function(){if(!isGoldRushActive()){clearInterval(t);updateGoldRushUI()}else updateGoldRushUI()},500);
+  }
+  refreshBalances();
+  saveCurrentAccount();
+  document.getElementById("account-overlay").classList.remove("show");
+  var terms=document.getElementById("terms-overlay");
+  if(terms)terms.classList.remove("show");
+  updateAdminUI();
+  if(typeof checkPendingPlay==="function")checkPendingPlay();
+  updateNavAvatar();
+  updateNavAvatar();
+}
+function checkPendingPlay(){
+  if(!currentAccount||currentAccount.admin)return;
+  var list=loadAccounts();
+  var acc=null;
+  for(var i=0;i<list.length;i++){if(list[i].name===currentAccount.name){acc=list[i];break}}
+  if(!acc||!acc.pendingPlay)return;
+  var p=acc.pendingPlay;
+  if(!confirm("Dit køb er godkendt! Start "+(p.name||"spil")+" nu?"))return;
+  // clear pending
+  for(var j=0;j<list.length;j++){
+    if(list[j].name===currentAccount.name){list[j].pendingPlay=null;break}
+  }
+  saveAccounts(list);
+  currentAccount.pendingPlay=null;
+  diamondBalance=acc.diamonds||0;
+  coinBalance=acc.coins||0;
+  refreshBalances();
+  selectedName=p.name;selectedPrice=p.price;selectedType=p.type;unitPrice=p.unit||p.price;
+  buyQty=p.qty||1;ticketsLeft=buyQty;buyMode=p.buyMode||"game";currentBox=p.box||null;
+  freeReplay=false;freeSkattejagt=false;
+  if(buyMode==="box")startBoxGame();else startGame();
+}
+function selectAccount(name){ /* legacy no-op – use login */ }
+function deleteAccount(name){
+  if(!confirm("Slet kontoen "+name+"?"))return;
+  var list=loadAccounts().filter(function(a){return a.name!==name});
+  saveAccounts(list);
+  if(currentAccount&&currentAccount.name===name){
+    currentAccount=null;diamondBalance=0;coinBalance=0;
+    document.getElementById("account-overlay").classList.add("show");
+  }
+  renderAccountList();
+}
+
+function fillAdminUserSelect(){
+  var sel=document.getElementById("admin-user-select");
+  if(!sel)return;
+  var list=loadAccounts();
+  sel.innerHTML="";
+  for(var i=0;i<list.length;i++){
+    if(currentAccount&&list[i].name===currentAccount.name)continue;
+    var opt=document.createElement("option");
+    opt.value=list[i].name;
+    opt.textContent=list[i].name+" (🪙 "+(list[i].coins||0)+")";
+    sel.appendChild(opt);
+  }
+  if(!sel.options.length){
+    var o=document.createElement("option");
+    o.value="";o.textContent="Ingen andre konti";
+    sel.appendChild(o);
+  }
+}
+function adminGiveTokens(){
+  if(!currentAccount||!currentAccount.admin){alert("Kun admin");return}
+  var sel=document.getElementById("admin-user-select");
+  var name=sel&&sel.value;
+  var amount=parseInt(document.getElementById("admin-token-amount").value,10)||0;
+  if(!name){alert("Vælg en spiller");return}
+  if(amount<1){alert("Angiv et beløb");return}
+  var list=loadAccounts();
+  for(var i=0;i<list.length;i++){
+    if(list[i].name===name){
+      list[i].coins=(list[i].coins||0)+amount;
+      saveAccounts(list);
+      alert("Gav "+amount+" chips til "+name);
+      fillAdminUserSelect();
+      return;
+    }
+  }
+  alert("Spiller ikke fundet");
+}
+function adminGiveDiamonds(){
+  if(!currentAccount||!currentAccount.admin){alert("Kun admin");return}
+  var sel=document.getElementById("admin-user-select");
+  var name=sel&&sel.value;
+  var amount=parseInt(document.getElementById("admin-dia-amount").value,10)||0;
+  if(!name){alert("Vælg en spiller");return}
+  if(amount<1){alert("Angiv et beløb");return}
+  var list=loadAccounts();
+  for(var i=0;i<list.length;i++){
+    if(list[i].name===name){
+      list[i].diamonds=(list[i].diamonds||0)+amount;
+      saveAccounts(list);
+      alert("Gav "+amount+" 💎 til "+name);
+      fillAdminUserSelect();
+      return;
+    }
+  }
+  alert("Spiller ikke fundet");
+}
+
+function updateAdminUI(){
+  var panel=document.getElementById("admin-panel");
+  if(!panel)return;
+  if(currentAccount&&currentAccount.admin){
+    panel.style.display="block";
+    fillAdminUserSelect();
+    renderWinLog();
+  } else {
+    panel.style.display="none";
+  }
+}
+function renderPending(){
+  var el=document.getElementById("pending-list");
+  if(!el)return;
+  var list=loadPending();
+  if(!list.length){
+    el.innerHTML='<p style="color:#94a3b8;font-size:12px;text-align:center">Ingen afventende køb</p>';
+    return;
+  }
+  var html="";
+  for(var i=0;i<list.length;i++){
+    var p=list[i];
+    html+='<div style="background:rgba(0,0,0,.35);border:1px solid #e8b923;border-radius:10px;padding:10px;margin-bottom:8px">';
+    html+='<div style="color:#ffe08a;font-weight:800;font-size:13px">'+p.user+'</div>';
+    html+='<div style="color:#94a3b8;font-size:12px;margin:4px 0">'+p.label+'</div>';
+    html+='<div style="display:flex;gap:6px">';
+    html+='<button type="button" class="btn-green" style="flex:1;padding:8px" onclick="approvePending('+i+')">Godkend</button>';
+    html+='<button type="button" class="btn-secondary" style="flex:1;padding:8px" onclick="denyPending('+i+')">Afvis</button>';
+    html+='</div></div>';
+  }
+  el.innerHTML=html;
+}
+function requestPurchase(kind, payload, label){
+  // Admin buys instantly
+  if(currentAccount&&currentAccount.admin){
+    return applyPurchase(kind, payload, currentAccount.name);
+  }
+  var list=loadPending();
+  list.push({
+    id:Date.now()+"_"+Math.random().toString(36).slice(2,7),
+    user:currentAccount?currentAccount.name:"?",
+    kind:kind,
+    payload:payload,
+    label:label,
+    time:Date.now()
+  });
+  savePending(list);
+  alert("⏳ Du skal spørge admin (snorre)!\nKøbet afventer godkendelse:\n"+label);
+  return false;
+}
+function applyPurchase(kind, payload, userName){
+  // Load that user and apply
+  var list=loadAccounts();
+  var acc=null, idx=-1;
+  for(var i=0;i<list.length;i++){
+    if(list[i].name===userName){acc=list[i];idx=i;break}
+  }
+  if(!acc)return false;
+  if(kind==="diamonds"){
+    var amount=payload.amount, cost=payload.coinCost;
+    if((acc.coins||0)<cost && cost>0){/* still allow if no limit */}
+    if(acc.coins>=cost)acc.coins-=cost;
+    acc.diamonds=(acc.diamonds||0)+amount;
+  } else if(kind==="goldrush"){
+    if((acc.diamonds||0)<20)return false;
+    acc.diamonds-=20;
+    // store boost end on account
+    acc.boostUntil=Date.now()+60000;
+  } else if(kind==="dwheel"){
+    if((acc.diamonds||0)<10)return false;
+    acc.diamonds-=10;
+    acc.freeDwheel=(acc.freeDwheel||0)+1;
+  } else if(kind==="exchange"){
+    var amt=payload.amount;
+    if((acc.diamonds||0)<amt)return false;
+    acc.diamonds-=amt;
+    acc.coins=(acc.coins||0)+amt;
+  } else if(kind==="play"){
+    if(payload.mode==="diamonds"){
+      if((acc.diamonds||0)<payload.cost)return false;
+      acc.diamonds-=payload.cost;
+    } else {
+      if((acc.coins||0)>=payload.cost)acc.coins-=payload.cost;
+    }
+    acc.pendingPlay=payload; // user can start this game once approved
+  }
+  list[idx]=acc;
+  saveAccounts(list);
+  // if current user is the one, refresh
+  if(currentAccount&&currentAccount.name===userName){
+    diamondBalance=acc.diamonds||0;
+    coinBalance=acc.coins||0;
+    if(acc.boostUntil)goldRushBoostUntil=acc.boostUntil;
+    refreshBalances();
+  }
+  return true;
+}
+function approvePending(index){
+  if(!currentAccount||!currentAccount.admin){alert("Kun admin");return}
+  var list=loadPending();
+  if(index<0||index>=list.length)return;
+  var p=list[index];
+  var ok=applyPurchase(p.kind, p.payload, p.user);
+  if(!ok){alert("Kunne ikke gennemføre – måske ikke nok saldo");}
+  else {
+    alert("Godkendt: "+p.label+" til "+p.user);
+    if(p.kind==="play"&&currentAccount&&currentAccount.name===p.user){
+      // admin approved own? rare
+    }
+  }
+  list.splice(index,1);
+  savePending(list);
+  renderPending();
+}
+function denyPending(index){
+  if(!currentAccount||!currentAccount.admin)return;
+  var list=loadPending();
+  if(index<0||index>=list.length)return;
+  var p=list[index];
+  list.splice(index,1);
+  savePending(list);
+  alert("Afvist: "+p.label+" fra "+p.user);
+  renderPending();
+}
+
+
+
+function openProfileOrLogin(){
+  if(!currentAccount){
+    document.getElementById("account-overlay").classList.add("show");
+    renderAccountList();
+    return;
+  }
+  openProfile();
+}
+function openProfile(){
+  if(!currentAccount){openProfileOrLogin();return}
+  var nameEl=document.getElementById("profile-name");
+  var stats=document.getElementById("profile-stats");
+  var img=document.getElementById("profile-avatar");
+  var ph=document.getElementById("profile-avatar-placeholder");
+  if(nameEl)nameEl.textContent=currentAccount.name+(currentAccount.admin?" 👑":"")+(isPremiumActive()?" ⭐ PREMIUM":"");
+  if(stats)stats.textContent="💎 "+diamondBalance+" · 🪙 "+coinBalance+" chips";
+  if(currentAccount.avatar){
+    img.src=currentAccount.avatar;
+    img.style.display="block";
+    if(ph)ph.style.display="none";
+  } else {
+    img.style.display="none";
+    if(ph)ph.style.display="flex";
+  }
+  document.getElementById("profile-overlay").classList.add("show");
+}
+function logoutAccount(){
+  saveCurrentAccount();
+  currentAccount=null;
+  diamondBalance=0;
+  coinBalance=0;
+  refreshBalances();
+  try{localStorage.removeItem(SESSION_KEY)}catch(e){}
+  document.getElementById("profile-overlay").classList.remove("show");
+  document.getElementById("shop-overlay").classList.remove("show");
+  document.getElementById("play-overlay").classList.remove("show");
+  document.getElementById("buy-overlay").classList.remove("show");
+  document.getElementById("terms-overlay").classList.remove("show");
+  document.getElementById("account-overlay").classList.add("show");
+  renderAccountList();
+  updateNavAvatar();
+  var panel=document.getElementById("admin-panel");
+  if(panel)panel.style.display="none";
+}
+function onAvatarSelected(input){
+  if(!currentAccount||!input.files||!input.files[0])return;
+  var file=input.files[0];
+  if(file.size>800000){alert("Billedet er for stort (max ~800 KB)");return}
+  var reader=new FileReader();
+  reader.onload=function(){
+    var data=reader.result;
+    // shrink via canvas if huge
+    var im=new Image();
+    im.onload=function(){
+      var max=256;
+      var w=im.width,h=im.height;
+      if(w>max||h>max){
+        if(w>h){h=Math.round(h*max/w);w=max}else{w=Math.round(w*max/h);h=max}
+      }
+      var c=document.createElement("canvas");
+      c.width=w;c.height=h;
+      c.getContext("2d").drawImage(im,0,0,w,h);
+      currentAccount.avatar=c.toDataURL("image/jpeg",0.7);
+      saveCurrentAccount();
+      openProfile();
+      updateNavAvatar();
+      alert("Profilbillede gemt");
+    };
+    im.src=data;
+  };
+  reader.readAsDataURL(file);
+}
+
+
+var FEED_KEY="goldrush_feed_v1";
+function loadFeed(){try{return JSON.parse(localStorage.getItem(FEED_KEY)||"[]")}catch(e){return []}}
+function saveFeed(list){localStorage.setItem(FEED_KEY,JSON.stringify(list))}
+
+
+function renderFeed(){
+  var el=document.getElementById("feed-list");
+  if(!el)return;
+  var list=loadFeed();
+  if(!list.length){
+    el.innerHTML='<p style="text-align:center;color:#94a3b8;font-size:13px;padding:20px">Ingen opslag endnu – vær den første!</p>';
+    return;
+  }
+  var me=currentAccount?currentAccount.name:"";
+  var html="";
+  for(var i=0;i<list.length;i++){
+    var p=list[i];
+    if(!p.id)p.id="p"+p.time+"_"+i;
+    if(!p.likes)p.likes=[];
+    var t=new Date(p.time);
+    var ts=t.getDate()+"/"+(t.getMonth()+1)+" "+t.getHours().toString().padStart(2,"0")+":"+t.getMinutes().toString().padStart(2,"0");
+    var av=p.avatar?'<img class="feed-av" src="'+p.avatar+'">':'<div class="feed-av" style="display:flex;align-items:center;justify-content:center">👤</div>';
+    var liked=me&&p.likes.indexOf(me)>=0;
+    html+='<div class="feed-post" data-user="'+escapeHtml(p.user)+'" data-pid="'+p.id+'">';
+    html+='<div class="feed-head feed-user-hit" style="cursor:pointer">'+av+'<div><div class="feed-user">'+escapeHtml(p.user)+(p.admin?" 👑":"")+'</div><div class="feed-time">'+ts+' · tryk navn for donate</div></div></div>';
+    if(p.image)html+='<img class="feed-img" src="'+p.image+'" alt="">';
+    if(p.caption)html+='<div class="feed-cap">'+escapeHtml(p.caption)+'</div>';
+    html+='<div class="feed-actions">';
+    html+='<button type="button" class="like-btn '+(liked?"liked":"")+'">'+(liked?"❤️ Liked":"🤍 Like")+'</button>';
+    html+='<span class="feed-likes">'+(p.likes.length||0)+' likes</span>';
+    html+='<button type="button" class="donate-btn">🎁 Donate</button>';
+    html+='</div></div>';
+  }
+  el.innerHTML=html;
+  saveFeed(list);
+  var posts=el.querySelectorAll(".feed-post");
+  for(var j=0;j<posts.length;j++){
+    (function(node){
+      var pid=node.getAttribute("data-pid");
+      var user=node.getAttribute("data-user");
+      var likeBtn=node.querySelector(".like-btn");
+      var donBtn=node.querySelector(".donate-btn");
+      var head=node.querySelector(".feed-user-hit");
+      if(likeBtn)likeBtn.onclick=function(){toggleLike(pid)};
+      if(donBtn)donBtn.onclick=function(){openDonateTo(user)};
+      if(head)head.onclick=function(){openDonateTo(user)};
+    })(posts[j]);
+  }
+}
+function toggleLike(postId){
+  if(!currentAccount){alert("Log ind for at like");return}
+  var list=loadFeed();
+  for(var i=0;i<list.length;i++){
+    if(String(list[i].id)===String(postId)){
+      if(!list[i].likes)list[i].likes=[];
+      var ix=list[i].likes.indexOf(currentAccount.name);
+      if(ix>=0)list[i].likes.splice(ix,1);
+      else list[i].likes.push(currentAccount.name);
+      saveFeed(list);
+      renderFeed();
+      return;
+    }
+  }
+}
+function openDonateTo(userName){
+  if(!currentAccount){alert("Log ind først");return}
+  if(userName===currentAccount.name){alert("Du kan ikke donere til dig selv");return}
+  var amount=prompt("Hvor mange tokens vil du give til "+userName+"? (Du har "+coinBalance+" chips)", "10");
+  if(amount===null)return;
+  amount=parseInt(amount,10);
+  if(!amount||amount<1){alert("Ugyldigt beløb");return}
+  if(coinBalance<amount){alert("Ikke nok chips");return}
+  var list=loadAccounts();
+  var found=false;
+  for(var i=0;i<list.length;i++){
+    if(list[i].name===userName){
+      list[i].coins=(list[i].coins||0)+amount;
+      found=true;
+      break;
+    }
+  }
+  if(!found){alert("Spilleren findes ikke (skal have en konto på denne enhed)");return}
+  updateCoins(-amount);
+  saveAccounts(list);
+  alert("Du donerede "+amount+" chips til "+userName+"!");
+}
+function escapeHtml(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+function postToFeed(input){
+  if(!currentAccount){alert("Log ind først");input.value="";return}
+  if(!input.files||!input.files[0])return;
+  var file=input.files[0];
+  if(file.size>1200000){alert("Billedet er for stort");input.value="";return}
+  var caption=(document.getElementById("feed-caption").value||"").trim();
+  var reader=new FileReader();
+  reader.onload=function(){
+    var im=new Image();
+    im.onload=function(){
+      var max=720,w=im.width,hh=im.height;
+      if(w>max||hh>max){if(w>hh){hh=Math.round(hh*max/w);w=max}else{w=Math.round(w*max/hh);hh=max}}
+      var c=document.createElement("canvas");c.width=w;c.height=hh;
+      c.getContext("2d").drawImage(im,0,0,w,hh);
+      var data=c.toDataURL("image/jpeg",0.72);
+      var list=loadFeed();
+      list.unshift({
+        id:"p"+Date.now()+"_"+Math.random().toString(36).slice(2,7),
+        user:currentAccount.name,
+        admin:!!currentAccount.admin,
+        avatar:currentAccount.avatar||null,
+        caption:caption,
+        image:data,
+        likes:[],
+        time:Date.now()
+      });
+      if(list.length>40)list=list.slice(0,40);
+      saveFeed(list);
+      document.getElementById("feed-caption").value="";
+      input.value="";
+      renderFeed();
+      alert("Opslag delt!");
+    };
+    im.src=reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+
+function closeOverlays(){
+  ["buy-overlay","play-overlay","wheel-overlay","shop-overlay","dwheel-overlay","profile-overlay"].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el)el.classList.remove("show");
+  });
+  slotsSpinning=false;
+  wheelSpinning=false;
+  caseSpinning=false;
+  freeReplay=false;
+  freeSkattejagt=false;
+  ticketsLeft=0;
+}
+
+function acceptTerms(){
+  var el=document.getElementById("terms-overlay");
+  if(el)el.classList.remove("show");
+}
+
+function updateNavAvatar(){
+  var icon=document.getElementById("nav-profile-icon");
+  if(!icon)return;
+  if(currentAccount&&currentAccount.avatar){
+    icon.outerHTML='<img id="nav-profile-icon" class="nav-avatar" src="'+currentAccount.avatar+'" alt="">';
+  } else {
+    var existing=document.getElementById("nav-profile-icon");
+    if(existing && existing.tagName==="IMG"){
+      existing.outerHTML='<span class="nav-icon" id="nav-profile-icon">👤</span>';
+    }
+  }
+}
+function restoreSession(){
+  try{
+    var last=localStorage.getItem(SESSION_KEY);
+    if(!last)return false;
+    var list=loadAccounts();
+    for(var i=0;i<list.length;i++){
+      if(list[i].name===last){
+        enterAccount(list[i]);
+        return true;
+      }
+    }
+  }catch(e){}
+  return false;
+}
+function deleteMyAccount(){
+  if(!currentAccount)return;
+  if(!confirm("Slet kontoen "+currentAccount.name+" permanent?"))return;
+  var name=currentAccount.name;
+  var list=loadAccounts().filter(function(a){return a.name!==name});
+  saveAccounts(list);
+  try{localStorage.removeItem(SESSION_KEY)}catch(e){}
+  currentAccount=null;diamondBalance=0;coinBalance=0;
+  refreshBalances();
+  document.getElementById("profile-overlay").classList.remove("show");
+  document.getElementById("account-overlay").classList.add("show");
+  renderAccountList();
+  updateNavAvatar();
+  alert("Konto slettet");
+}
+
+
+function isPremiumActive(){
+  if(!currentAccount)return false;
+  return !!(currentAccount.premiumUntil && currentAccount.premiumUntil > Date.now());
+}
+function premiumMult(){
+  return isPremiumActive() ? 1.5 : 1;
+}
+function buyPremium(){
+  if(!currentAccount){alert("Log ind først");return}
+  if(isPremiumActive()){alert("Du har allerede Premium!");return}
+  if(coinBalance<10){alert("Premium koster 10 chips / uge");return}
+  updateCoins(-10);
+  currentAccount.premiumUntil = Date.now() + 7*24*60*60*1000;
+  // weekly gems claimable
+  currentAccount.premiumGemsDue = true;
+  currentAccount.premiumWeekStart = Date.now();
+  saveCurrentAccount();
+  if(!currentAccount.admin)notifyAdminSpend(currentAccount.name,"Købte Premium (10 chips)",10);
+  claimPremiumWeeklyGems();
+  alert("⭐ GoldRush Premium aktiv i 7 dage!\n+1,5× token-gevinster · 5 💎 denne uge");
+  refreshShopUI();
+  openProfile();
+}
+function claimPremiumWeeklyGems(){
+  if(!currentAccount||!isPremiumActive())return;
+  if(currentAccount.premiumGemsDue){
+    updateDiamonds(5);
+    currentAccount.premiumGemsDue=false;
+    saveCurrentAccount();
+  }
+  // if week rolled over while premium still active
+  if(currentAccount.premiumWeekStart && (Date.now()-currentAccount.premiumWeekStart)>7*24*60*60*1000){
+    if(isPremiumActive()){
+      currentAccount.premiumWeekStart=Date.now();
+      currentAccount.premiumGemsDue=true;
+      updateDiamonds(5);
+      currentAccount.premiumGemsDue=false;
+      saveCurrentAccount();
+    }
+  }
+}
+function trackGambled(amount){
+  if(!currentAccount||!amount||amount<=0)return;
+  currentAccount.gambled=(currentAccount.gambled||0)+amount;
+  saveCurrentAccount();
+}
+function canSpinWheel(){
+  if(!currentAccount)return false;
+  if(currentAccount.admin)return true; // admin free
+  var last=currentAccount.lastWheel||0;
+  return (Date.now()-last) >= 3*24*60*60*1000;
+}
+function wheelCooldownLeft(){
+  var last=(currentAccount&&currentAccount.lastWheel)||0;
+  var left=3*24*60*60*1000 - (Date.now()-last);
+  if(left<=0)return "";
+  var d=Math.floor(left/86400000);
+  var hrs=Math.floor((left%86400000)/3600000);
+  return d+"d "+hrs+"t";
+}
+function markWheelSpun(){
+  if(!currentAccount)return;
+  currentAccount.lastWheel=Date.now();
+  saveCurrentAccount();
+}
+function renderLeaderboard(type){
+  type=type||"gambled";
+  var el=document.getElementById("leader-list");
+  if(!el)return;
+  var list=loadAccounts().filter(function(a){
+    if(a.admin)return false;
+    if(String(a.name||"").toLowerCase().indexOf("snorre")>=0)return false;
+    return true;
+  });
+  if(type==="gambled")list.sort(function(a,b){return (b.gambled||0)-(a.gambled||0)});
+  else if(type==="diamonds")list.sort(function(a,b){return (b.diamonds||0)-(a.diamonds||0)});
+  else list.sort(function(a,b){return (b.coins||0)-(a.coins||0)});
+  if(!list.length){el.innerHTML='<p style="text-align:center;color:#94a3b8">Ingen spillere endnu</p>';return}
+  var html="";
+  var medals=["🥇","🥈","🥉"];
+  for(var i=0;i<list.length;i++){
+    var a=list[i];
+    var val=type==="gambled"?(a.gambled||0):type==="diamonds"?(a.diamonds||0):(a.coins||0);
+    var unit=type==="diamonds"?"💎":type==="gambled"?"gamblet":"tokens";
+    var rank=i<3?medals[i]:((i+1)+".");
+    var prem=(a.premiumUntil&&a.premiumUntil>Date.now())?'<span class="premium-tag">PREMIUM</span>':'';
+    var adm=a.admin||(String(a.name).toLowerCase().indexOf("snorre")>=0)?" 👑":"";
+    html+='<div class="lb-row"><span class="lb-rank">'+rank+'</span><span class="lb-name">'+escapeHtml(a.name)+adm+prem+'</span><span class="lb-val">'+val+' '+unit+'</span></div>';
+  }
+  el.innerHTML=html;
+}
+
+
+
+var slotsSpinning=false;
+var SLOT_SYMS=["🍒","🍋","🔔","⭐","💎","7️⃣"];
+function closeSlots(){slotsSpinning=false;closeOverlays();}
+function openSlots(){
+  if(!currentAccount){alert("Log ind først");return}
+  selectedName="Tyveknægt";selectedPrice=5;selectedType="slots";unitPrice=5;buyMode="game";buyQty=1;ticketsLeft=0;
+  document.getElementById("play-overlay").classList.add("show");
+  document.getElementById("play-title").textContent="🎰 Tyveknægt";
+  document.getElementById("play-instruction").textContent="3 ens = gevinst · house edge";
+  document.getElementById("result-text").textContent="";
+  document.getElementById("result-text").className="result-text";
+  ["scratch-area","grid-area","chests-area","mini-area","plinko-area","box-area","catch-area","tap-area","dice-area","slots-area"].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display="none";
+  });
+  var sa=document.getElementById("slots-area");
+  if(sa)sa.style.display="block";
+  var msg=document.getElementById("slots-msg");
+  if(msg)msg.textContent="Kost: 5 chips";
+  var btn=document.getElementById("slots-spin-btn");
+  if(btn)btn.disabled=false;
+  document.getElementById("play-actions").innerHTML='<button type="button" class="btn-secondary" onclick="closeSlots()">← Tilbage</button>';
+}
+function spinSlots(){
+  if(slotsSpinning)return;
+  if(!currentAccount){alert("Log ind først");return}
+  if(coinBalance<5){alert("Ikke nok chips");return}
+  updateCoins(-5);
+  trackGambled(5);
+  if(!currentAccount.admin)notifyAdminSpend(currentAccount.name,"Tyveknægt (5 chips)",5);
+  slotsSpinning=true;
+  var btn=document.getElementById("slots-spin-btn");
+  if(btn)btn.disabled=true;
+  document.getElementById("slots-msg").textContent="Snurrer...";
+  document.getElementById("result-text").textContent="";
+  document.getElementById("result-text").className="result-text";
+  var reels=document.querySelectorAll(".slot-reel");
+  var n=0;
+  var iv=setInterval(function(){
+    for(var i=0;i<reels.length;i++)reels[i].textContent=SLOT_SYMS[Math.floor(Math.random()*SLOT_SYMS.length)];
+    n++;
+    if(n>22){
+      clearInterval(iv);
+      var a,b,c,r=Math.random();
+      // Much lower odds for big wins
+      if(r<0.004){a=b=c="7️⃣";}          // ~0.4% jackpot
+      else if(r<0.012){a=b=c="💎";}       // ~0.8%
+      else if(r<0.025){a=b=c="⭐";}       // ~1.3%
+      else if(r<0.05){a=b=c="🔔";}        // ~2.5%
+      else if(r<0.09){a=b=c="🍋";}        // ~4%
+      else if(r<0.15){a=b=c="🍒";}        // ~6%  -> total triple ~15%
+      else {
+        a=SLOT_SYMS[Math.floor(Math.random()*SLOT_SYMS.length)];
+        b=SLOT_SYMS[Math.floor(Math.random()*SLOT_SYMS.length)];
+        c=SLOT_SYMS[Math.floor(Math.random()*SLOT_SYMS.length)];
+        // break accidental triples
+        if(a===b&&b===c)c=SLOT_SYMS[(SLOT_SYMS.indexOf(c)+1)%SLOT_SYMS.length];
+      }
+      reels[0].textContent=a;reels[1].textContent=b;reels[2].textContent=c;
+      slotsSpinning=false;
+      if(btn)btn.disabled=false;
+      var win=0;
+      if(a===b&&b===c){
+        if(a==="7️⃣")win=40;
+        else if(a==="💎")win=22;
+        else if(a==="⭐")win=14;
+        else if(a==="🔔")win=10;
+        else if(a==="🍋")win=7;
+        else win=5;
+      } else if(a===b||b===c||a===c){
+        win=0; // no pair wins - harder
+      }
+      if(win>0){
+        document.getElementById("slots-msg").textContent="🎉 GEVINST · "+win+" chips";
+        showResult(true,a+" "+b+" "+c+" = "+win+" chips!",win);
+      } else {
+        document.getElementById("slots-msg").textContent="Ingen gevinst – prøv igen";
+        showResult(false,"Ingen gevinst",0);
+      }
+      // always ensure back button
+      document.getElementById("play-actions").innerHTML='<button type="button" class="btn-secondary" onclick="closeSlots()">← Tilbage</button>';
+    }
+  },70);
+}
+
+function openShop(){
+  if(!currentAccount){alert("Vælg konto først");return}
+  refreshShopUI();
+  document.getElementById("shop-overlay").classList.add("show");
+}
+function refreshShopUI(){
+  var line=document.getElementById("shop-balance-line");
+  if(line)line.textContent="💎 "+diamondBalance+" · 🪙 "+coinBalance+" chips";
+  var gifts=(currentAccount&&currentAccount.gifts)||0;
+  var inv=document.getElementById("gift-inventory");
+  var btn=document.getElementById("open-gift-btn");
+  if(inv)inv.textContent=gifts>0?("Du har "+gifts+" gave"+(gifts>1?"r":"")):"Ingen gaver endnu";
+  if(btn)btn.style.display=gifts>0?"inline-block":"none";
+}
+function exchangeDiamonds(amount){
+  if(!currentAccount){alert("Log ind først");return}
+  if(diamondBalance<amount){alert("Ikke nok diamanter");return}
+  updateDiamonds(-amount);updateCoins(amount);refreshShopUI();
+  if(currentAccount&&!currentAccount.admin)notifyAdminSpend(currentAccount.name,"Vekslede "+amount+" 💎 til chips",amount);
+  alert(amount+" 💎 → "+amount+" chips");
+}
+function openGift(){
+  if(!currentAccount||!currentAccount.gifts||currentAccount.gifts<=0){alert("Ingen gaver");return}
+  currentAccount.gifts--;
+  // realistic gift: mostly small, rare bigger
+  var r=Math.random(), got=1;
+  if(r<0.45)got=1;
+  else if(r<0.75)got=2;
+  else if(r<0.92)got=3;
+  else if(r<0.98)got=5;
+  else got=10;
+  updateDiamonds(got);
+  saveCurrentAccount();
+  refreshShopUI();
+  alert("🎀 Gaven indeholdt "+got+" 💎");
+}
+function maybeDropGift(){
+  if(!(selectedType==="scratch"||selectedType==="mini"||selectedType==="grid"||selectedType==="chests"))return;
+  if(Math.random()>0.08)return;
+  if(!currentAccount)return;
+  currentAccount.gifts=(currentAccount.gifts||0)+1;
+  saveCurrentAccount();
+  setTimeout(function(){alert("🎀 Du fandt en gave! Åbn den i Butikken.");},400);
+}
+
+function isGoldRushActive(){return Date.now()<goldRushBoostUntil}
+function goldRushMultiplier(){return isGoldRushActive()?2:1}
+function activateGoldRush(){
+  if(!currentAccount){alert("Log ind først");return}
+  if(isGoldRushActive()){alert("GoldRush kører allerede!");return}
+  if(diamondBalance<20){alert("Du skal bruge 20 💎");return}
+  updateDiamonds(-20);
+  goldRushBoostUntil=Date.now()+60000;
+  updateGoldRushUI();
+  if(currentAccount&&!currentAccount.admin)notifyAdminSpend(currentAccount.name,"Aktiverede GoldRush (20 💎)",20);
+  alert("🔥 GOLDRUSH aktiv i 60 sekunder!");
+  var t=setInterval(function(){if(!isGoldRushActive()){clearInterval(t);updateGoldRushUI()}else updateGoldRushUI()},500);
+}
+function updateGoldRushUI(){
+  var el=document.getElementById("goldrush-status");
+  if(!el)return;
+  if(isGoldRushActive()){
+    var sec=Math.ceil((goldRushBoostUntil-Date.now())/1000);
+    el.style.display="block";
+    el.textContent="🔥 GOLDRUSH · dobbelt præmier · "+sec+"s";
+  } else el.style.display="none";
+}
+
+function buyDiamonds(amount,coinCost){
+  if(!currentAccount){alert("Log ind først");return}
+  if(coinBalance<coinCost){alert("Ikke nok chips");return}
+  updateCoins(-coinCost);
+  updateDiamonds(amount);
+  refreshShopUI();
+  if(currentAccount&&!currentAccount.admin)notifyAdminSpend(currentAccount.name,"Købte "+amount+" 💎 for "+coinCost+" chips",coinCost);
+  alert("Du købte "+amount+" 💎");
+}
+function diamondsForPlay(price){
+  return Math.max(1,Math.floor(price/5));
+}
+function setPayMode(mode){
+  payMode=mode;
+  var cb=document.getElementById("pay-coins-btn");
+  var db=document.getElementById("pay-diamonds-btn");
+  if(cb){cb.className=mode==="coins"?"active":""}
+  if(db){db.className=mode==="diamonds"?"dim-active":""}
+  updatePayHint();
+}
+function updatePayHint(){
+  var hint=document.getElementById("pay-hint");
+  if(!hint)return;
+  if(payMode==="diamonds"){
+    var need=calcDiamondCost();
+    hint.textContent="Koster "+need+" 💎 (du har "+diamondBalance+" 💎)";
+    var bp=document.getElementById("buy-price");
+    if(bp)bp.textContent=need+" 💎";
+  } else {
+    hint.textContent="Du har "+coinBalance+" chips";
+    var bp=document.getElementById("buy-price");
+    if(bp){
+      if(buyMode==="game"&&typeof isScratchType==="function"&&isScratchType(selectedType))
+        bp.textContent=calcBundleTotal(unitPrice,buyQty)+" chips";
+      else bp.textContent=(selectedPrice||unitPrice)+" chips";
+    }
+  }
+}
+function calcDiamondCost(){
+  var unit=unitPrice||selectedPrice||0;
+  var qty=1;
+  if(buyMode==="game"&&typeof isScratchType==="function"&&isScratchType(selectedType))qty=buyQty||1;
+  if(buyMode==="box")return selectedPrice||unit;
+  if(qty>=3)return calcBundleTotal(unit,qty);
+  return unit*qty;
+}
+
+// boot accounts
+document.addEventListener("DOMContentLoaded",function(){
+  renderAccountList();
+  var last=null;
+  try{last=localStorage.getItem(SESSION_KEY)}catch(e){}
+  // stay on account screen - user picks
+});
+renderAccountList();
+
+var BOXES={mini:{name:"Mini Box",price:10,prizes:[2,5,8,10,12,15,20],weights:[15,16,14,18,16,12,9]},bronze:{name:"Bronze Box",price:25,prizes:[5,10,15,20,25,35,50],weights:[38,28,16,10,5,2,1]},silver:{name:"Silver Box",price:50,prizes:[10,20,30,40,50,75,100],weights:[35,26,18,12,6,2,1]},gold:{name:"Gold Box",price:75,prizes:[15,25,40,50,75,100,150],weights:[32,26,18,12,7,3,2]}};
+var wheelSlices=[{label:"Ingenting",color:"#64748b",type:"nothing"},{label:"+2 💎",color:"#0ea5e9",type:"diamonds",amount:2},{label:"Ingenting",color:"#475569",type:"nothing"},{label:"Gratis lod",color:"#22c55e",type:"replay"},{label:"+5 💎",color:"#38bdf8",type:"diamonds",amount:5},{label:"5 kr lod",color:"#fbbf24",type:"ticket5"},{label:"+1 💎",color:"#0284c7",type:"diamonds",amount:1},{label:"+5 chips",color:"#a855f7",type:"chips",amount:5}];
+function goTab(p){
+  document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active")});
+  document.querySelectorAll(".panel").forEach(function(x){x.classList.remove("active")});
+  var t=document.querySelector('.tab[data-panel="'+p+'"]');
+  if(t)t.classList.add("active");
+  var panel=document.getElementById("panel-"+p);
+  if(panel)panel.classList.add("active");
+  document.querySelectorAll(".bottom-nav .nav-item").forEach(function(n){n.classList.remove("active")});
+  var order=["spil","boxes","arcade","feed","leader"];
+  var idx=order.indexOf(p);
+  var navs=document.querySelectorAll(".bottom-nav .nav-item");
+  if(idx>=0&&navs[idx])navs[idx].classList.add("active");
+  if(p==="feed")renderFeed();
+  if(p==="leader")renderLeaderboard("gambled");
+}
+
+function isScratchType(t){return t==="scratch"||t==="mini"||t==="grid"||t==="chests"}
+function calcBundleTotal(unit,qty){if(qty>=3)return Math.round(unit*3*0.85);return unit*qty}
+function setQty(q){
+  buyQty=q;
+  document.querySelectorAll(".qty-btn").forEach(function(b){
+    var on=+b.getAttribute("data-q")===q;
+    b.style.background=on?(q===3?"rgba(34,197,94,.35)":"rgba(232,185,35,.35)"):"rgba(0,0,0,.35)";
+    b.style.borderColor=on?(q===3?"#22c55e":"#ffe066"):"#e8b923";
+  });
+  var total=calcBundleTotal(unitPrice,q),full=unitPrice*q;
+  var bp=document.getElementById("buy-price");
+  if(bp)bp.textContent=total+" chips";
+  var hint=document.getElementById("qty-hint");
+  if(hint){
+    if(q===3){hint.textContent="Pakke-rabat: spar "+(full-total)+" chips (3 for "+total+")";hint.style.color="#4ade80"}
+    else if(q===2){hint.textContent="Kob 3 og spar ca. 15%";hint.style.color="#e8c060"}
+    else hint.textContent="";
+  }
+  if(typeof updatePayHint==="function")updatePayHint();
+}
+
+function selectCard(n,p,t){
+  buyMode="game";selectedName=n;selectedPrice=p;selectedType=t;unitPrice=p;buyQty=1;ticketsLeft=0;
+  freeReplay=false;freeSkattejagt=false;
+  document.getElementById("buy-name").textContent=n;
+  var qw=document.getElementById("qty-wrap");
+  if(isScratchType(t)){qw.style.display="block";setQty(1)}
+  else{qw.style.display="none";document.getElementById("buy-price").textContent=p+" chips";var hi=document.getElementById("qty-hint");if(hi)hi.textContent=""}
+  var pt=document.getElementById("pay-toggle");
+  if(pt){pt.style.display="flex";setPayMode("coins")}
+  document.getElementById("buy-overlay").classList.add("show");
+}
+function openBoxBuy(key){buyMode="box";currentBox=key;var b=BOXES[key];selectedName=b.name;selectedPrice=b.price;selectedType="box";unitPrice=b.price;buyQty=1;
+  document.getElementById("buy-name").textContent=b.name;document.getElementById("buy-price").textContent=b.price+" kr";
+  var qw=document.getElementById("qty-wrap");if(qw)qw.style.display="none";
+  var pt=document.getElementById("pay-toggle");if(pt){pt.style.display="flex";setPayMode("coins")}
+  document.getElementById("buy-overlay").classList.add("show")}
+function confirmBuy(){
+  if(!currentAccount){alert("Log ind først");return}
+  var cost=selectedPrice;
+  if(buyMode==="game"&&isScratchType(selectedType)&&!freeReplay&&!freeSkattejagt){
+    cost=calcBundleTotal(unitPrice,buyQty);
+    selectedPrice=unitPrice;
+    ticketsLeft=buyQty;
+  } else {ticketsLeft=1}
+  if(freeReplay||freeSkattejagt){
+    ticketsLeft=1;
+    document.getElementById("buy-overlay").classList.remove("show");
+    if(buyMode==="box")startBoxGame();else startGame();
+    return;
+  }
+  if(payMode==="diamonds"){
+    var dCost=(buyMode==="box")?selectedPrice:((buyMode==="game"&&isScratchType(selectedType))?calcBundleTotal(unitPrice,buyQty):selectedPrice);
+    if(diamondBalance<dCost){alert("Ikke nok diamanter! Du har "+diamondBalance+" 💎");return}
+    updateDiamonds(-dCost);
+  } else {
+    if(coinBalance<cost){alert("Ikke nok chips! Du har "+coinBalance);return}
+    updateCoins(-cost);
+  }
+  if(currentAccount&&!currentAccount.admin){
+    var spendLabel=(selectedName||"spil")+" ("+(payMode==="diamonds"?"💎":"tokens")+")";
+    notifyAdminSpend(currentAccount.name, "Brugte på "+spendLabel, payMode==="diamonds"?calcDiamondCost():cost);
+  }
+  if(payMode!=="diamonds")trackGambled(cost);
+  else trackGambled(calcDiamondCost());
+  document.getElementById("buy-overlay").classList.remove("show");
+  if(buyMode==="box")startBoxGame();else startGame();
+}
+
+function playNextTicket(){
+  if(ticketsLeft<=0){closeOverlays();return}
+  scratched=false;gameWon=false;lastWheelShown=false;
+  startGame();
+}
+function showWheelFromLobby(){lastWheelShown=true;document.getElementById("wheel-intro").textContent="Prøv lykkehjulet!";document.getElementById("wheel-result").textContent="";document.getElementById("spin-btn").disabled=false;
+var flappyRunning=false,flappyAnim=null,flappyScore=0,flappyBird,flappyPipes,flappyDead;
+function startFlappy(){
+  flappyRunning=false;flappyScore=0;
+  document.getElementById("flappy-score").textContent="Score: 0";
+  document.getElementById("flappy-start-btn").disabled=false;
+  document.getElementById("flappy-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+  var c=document.getElementById("flappy-canvas"),ctx=c.getContext("2d");
+  ctx.fillStyle="#70c5ce";ctx.fillRect(0,0,300,420);
+  ctx.fillStyle="#fff";ctx.font="bold 18px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,210);
+  function flap(){if(flappyRunning)flappyBird.vy=-3.2}
+  c.onclick=function(e){e.preventDefault();flap()};
+  c.ontouchstart=function(e){e.preventDefault();flap()};
+}
+function flappyStart(){
+  if(flappyRunning)return;
+  flappyRunning=true;flappyDead=false;flappyScore=0;
+  flappyBird={x:70,y:200,vy:0,r:14};
+  flappyPipes=[];
+  document.getElementById("flappy-start-btn").disabled=true;
+  document.getElementById("flappy-start-btn").textContent="Spiller...";
+  var c=document.getElementById("flappy-canvas"),ctx=c.getContext("2d"),frame=0;
+  function spawn(){var gap=130,top=50+Math.random()*140;flappyPipes.push({x:320,top:top,gap:gap,passed:false})}
+  function loop(){
+    if(!flappyRunning)return;
+    frame++;
+    flappyBird.vy+=0.12;
+    flappyBird.y+=flappyBird.vy;
+    if(frame%140===0)spawn();
+    for(var i=flappyPipes.length-1;i>=0;i--){
+      flappyPipes[i].x-=1.15;
+      if(!flappyPipes[i].passed&&flappyPipes[i].x+44<flappyBird.x){
+        flappyPipes[i].passed=true;flappyScore++;
+        document.getElementById("flappy-score").textContent="Score: "+flappyScore+" (+"+flappyScore+" kr)";
+        if(navigator.vibrate)navigator.vibrate(12);
+      }
+      if(flappyPipes[i].x<-50)flappyPipes.splice(i,1);
+    }
+    for(var i=0;i<flappyPipes.length;i++){
+      var p=flappyPipes[i];
+      if(flappyBird.x+flappyBird.r>p.x&&flappyBird.x-flappyBird.r<p.x+44){
+        if(flappyBird.y-flappyBird.r<p.top||flappyBird.y+flappyBird.r>p.top+p.gap)flappyDead=true;
+      }
+    }
+    if(flappyBird.y>400-flappyBird.r||flappyBird.y<flappyBird.r)flappyDead=true;
+    ctx.fillStyle="#70c5ce";ctx.fillRect(0,0,300,420);
+    ctx.fillStyle="#5a8f3c";ctx.fillRect(0,400,300,20);
+    flappyPipes.forEach(function(p){
+      ctx.fillStyle="#5a8f3c";ctx.fillRect(p.x,0,44,p.top);ctx.fillRect(p.x,p.top+p.gap,44,420-(p.top+p.gap));
+      ctx.fillStyle="#73bf2e";ctx.fillRect(p.x-3,p.top-18,50,18);ctx.fillRect(p.x-3,p.top+p.gap,50,18);
+    });
+    ctx.beginPath();ctx.arc(flappyBird.x,flappyBird.y,flappyBird.r,0,Math.PI*2);ctx.fillStyle="#fbbf24";ctx.fill();
+    ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(flappyBird.x+5,flappyBird.y-4,3.5,0,Math.PI*2);ctx.fill();
+    if(flappyDead){
+      flappyRunning=false;
+      document.getElementById("flappy-start-btn").disabled=false;
+      document.getElementById("flappy-start-btn").textContent="Færdig";
+      showResult(flappyScore>0,"Flappy: "+flappyScore+" rør = "+flappyScore+" kr!",flappyScore);
+      return;
+    }
+    flappyAnim=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+var snakeRunning=false,snakeAnim=null,snakeScore=0,snake,snakeDir,snakeNextDir,snakeFood,snakeGrid=12,snakeCell=25;
+function snakeGo(dx,dy){
+  if(!snakeRunning)return;
+  if(dx!==0&&snakeDir.x!==0)return;
+  if(dy!==0&&snakeDir.y!==0)return;
+  snakeNextDir={x:dx,y:dy};
+}
+function startSnake(){
+  snakeRunning=false;snakeScore=0;
+  document.getElementById("snake-score").textContent="Æbler: 0";
+  document.getElementById("snake-start-btn").disabled=false;
+  document.getElementById("snake-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+  var c=document.getElementById("snake-canvas"),ctx=c.getContext("2d");
+  ctx.fillStyle="#0f172a";ctx.fillRect(0,0,300,300);
+  ctx.fillStyle="#fff";ctx.font="bold 18px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,150);
+  document.onkeydown=function(e){
+    if(!snakeRunning)return;
+    if(e.key==="ArrowUp")snakeGo(0,-1);
+    if(e.key==="ArrowDown")snakeGo(0,1);
+    if(e.key==="ArrowLeft")snakeGo(-1,0);
+    if(e.key==="ArrowRight")snakeGo(1,0);
+  };
+  var tx=0,ty=0;
+  c.ontouchstart=function(e){e.preventDefault();tx=e.touches[0].clientX;ty=e.touches[0].clientY};
+  c.ontouchend=function(e){
+    if(!snakeRunning)return;
+    var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>Math.abs(dy)){if(dx>25)snakeGo(1,0);if(dx<-25)snakeGo(-1,0)}
+    else{if(dy>25)snakeGo(0,1);if(dy<-25)snakeGo(0,-1)}
+  };
+}
+function snakeStart(){
+  if(snakeRunning)return;
+  snakeRunning=true;snakeScore=0;
+  snake=[{x:5,y:5},{x:4,y:5},{x:3,y:5}];
+  snakeDir={x:1,y:0};snakeNextDir={x:1,y:0};
+  snakeFood={x:8,y:8};
+  document.getElementById("snake-start-btn").disabled=true;
+  document.getElementById("snake-start-btn").textContent="Spiller...";
+  var c=document.getElementById("snake-canvas"),ctx=c.getContext("2d"),tick=0;
+  function placeFood(){
+    do{snakeFood={x:Math.floor(Math.random()*snakeGrid),y:Math.floor(Math.random()*snakeGrid)}}
+    while(snake.some(function(s){return s.x===snakeFood.x&&s.y===snakeFood.y}));
+  }
+  function loop(){
+    if(!snakeRunning)return;
+    tick++;
+    if(tick%14===0){
+      snakeDir=snakeNextDir;
+      var head={x:snake[0].x+snakeDir.x,y:snake[0].y+snakeDir.y};
+      if(head.x<0||head.y<0||head.x>=snakeGrid||head.y>=snakeGrid||snake.some(function(s){return s.x===head.x&&s.y===head.y})){
+        snakeRunning=false;
+        document.getElementById("snake-start-btn").disabled=false;
+        document.getElementById("snake-start-btn").textContent="Færdig";
+        showResult(snakeScore>0,"Snake: "+snakeScore+" æbler = "+snakeScore+" kr!",snakeScore);
+        return;
+      }
+      snake.unshift(head);
+      if(head.x===snakeFood.x&&head.y===snakeFood.y){
+        snakeScore++;
+        document.getElementById("snake-score").textContent="Æbler: "+snakeScore+" (+"+snakeScore+" kr)";
+        placeFood();
+        if(navigator.vibrate)navigator.vibrate(18);
+      } else snake.pop();
+    }
+    ctx.fillStyle="#0f172a";ctx.fillRect(0,0,300,300);
+    ctx.fillStyle="#ef4444";ctx.beginPath();ctx.arc(snakeFood.x*snakeCell+snakeCell/2,snakeFood.y*snakeCell+snakeCell/2,snakeCell/2-3,0,Math.PI*2);ctx.fill();
+    snake.forEach(function(s,i){
+      ctx.fillStyle=i===0?"#4ade80":"#22c55e";
+      ctx.fillRect(s.x*snakeCell+2,s.y*snakeCell+2,snakeCell-4,snakeCell-4);
+    });
+    snakeAnim=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+var catchRunning=false,catchScore=0,catchBasket,catchCoins,catchTime,catchAnim;
+function startCatch(){
+  catchRunning=false;catchScore=0;
+  document.getElementById("catch-score").textContent="Mønter: 0 · Tid: 20";
+  document.getElementById("catch-start-btn").disabled=false;
+  document.getElementById("catch-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d");
+  ctx.fillStyle="#1e3a5f";ctx.fillRect(0,0,300,400);
+  ctx.fillStyle="#fff";ctx.font="bold 18px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,200);
+}
+function catchStart(){
+  if(catchRunning)return;
+  catchRunning=true;catchScore=0;catchTime=20;
+  catchBasket={x:120,w:70,y:360};
+  catchCoins=[];
+  document.getElementById("catch-start-btn").disabled=true;
+  document.getElementById("catch-start-btn").textContent="Spiller...";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d"),frame=0,last=Date.now();
+  function setX(clientX){
+    var rect=c.getBoundingClientRect();
+    var x=(clientX-rect.left)*(300/rect.width);
+    catchBasket.x=Math.max(0,Math.min(300-catchBasket.w,x-catchBasket.w/2));
+  }
+  c.onmousemove=function(e){if(catchRunning)setX(e.clientX)};
+  c.ontouchmove=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  c.ontouchstart=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  function loop(){
+    if(!catchRunning)return;
+    frame++;
+    var now=Date.now();
+    if(now-last>=1000){catchTime--;last=now;if(catchTime<=0){
+      catchRunning=false;
+      document.getElementById("catch-start-btn").disabled=false;
+      document.getElementById("catch-start-btn").textContent="Færdig";
+      showResult(catchScore>0,"Catch: "+catchScore+" mønter = "+catchScore+" kr!",catchScore);
+      return;
+    }}
+    if(frame%45===0)catchCoins.push({x:20+Math.random()*260,y:-20,vy:1.2+Math.random()*0.8,r:12});
+    for(var i=catchCoins.length-1;i>=0;i--){
+      catchCoins[i].y+=catchCoins[i].vy;
+      if(catchCoins[i].y+catchCoins[i].r>catchBasket.y&&catchCoins[i].y<catchBasket.y+30&&
+         catchCoins[i].x>catchBasket.x&&catchCoins[i].x<catchBasket.x+catchBasket.w){
+        catchScore++;catchCoins.splice(i,1);
+        document.getElementById("catch-score").textContent="Mønter: "+catchScore+" · Tid: "+catchTime;
+        if(navigator.vibrate)navigator.vibrate(10);
+        continue;
+      }
+      if(catchCoins[i].y>420)catchCoins.splice(i,1);
+    }
+    document.getElementById("catch-score").textContent="Mønter: "+catchScore+" · Tid: "+catchTime;
+    var g=ctx.createLinearGradient(0,0,0,400);g.addColorStop(0,"#1e3a5f");g.addColorStop(1,"#0f172a");
+    ctx.fillStyle=g;ctx.fillRect(0,0,300,400);
+    catchCoins.forEach(function(coin){
+      ctx.beginPath();ctx.arc(coin.x,coin.y,coin.r,0,Math.PI*2);
+      ctx.fillStyle="#fbbf24";ctx.fill();
+      ctx.fillStyle="#92400e";ctx.font="bold 10px Arial";ctx.textAlign="center";ctx.fillText("kr",coin.x,coin.y+4);
+    });
+    ctx.fillStyle="#e8b923";ctx.fillRect(catchBasket.x,catchBasket.y,catchBasket.w,24);
+    ctx.fillStyle="#3d0000";ctx.fillRect(catchBasket.x+4,catchBasket.y+4,catchBasket.w-8,16);
+    catchAnim=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+
+var catchRunning=false,catchScore=0,catchBasket,catchCoins,catchTime,catchAnim;
+function startCatch(){
+  catchRunning=false;catchScore=0;
+  document.getElementById("catch-score").textContent="Mønter: 0 · Tid: 20";
+  document.getElementById("catch-start-btn").disabled=false;
+  document.getElementById("catch-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d");
+  ctx.fillStyle="#1e3a5f";ctx.fillRect(0,0,300,400);
+  ctx.fillStyle="#fff";ctx.font="bold 18px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,200);
+}
+function catchStart(){
+  if(catchRunning)return;
+  catchRunning=true;catchScore=0;catchTime=20;
+  catchBasket={x:120,w:70,y:360};catchCoins=[];
+  document.getElementById("catch-start-btn").disabled=true;
+  document.getElementById("catch-start-btn").textContent="Spiller...";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d"),frame=0,last=Date.now();
+  function setX(clientX){
+    var rect=c.getBoundingClientRect();
+    var x=(clientX-rect.left)*(300/rect.width);
+    catchBasket.x=Math.max(0,Math.min(300-catchBasket.w,x-catchBasket.w/2));
+  }
+  c.onmousemove=function(e){if(catchRunning)setX(e.clientX)};
+  c.ontouchmove=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  c.ontouchstart=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  function loop(){
+    if(!catchRunning)return;
+    frame++;
+    var now=Date.now();
+    if(now-last>=1000){
+      catchTime--;last=now;
+      if(catchTime<=0){
+        catchRunning=false;
+        document.getElementById("catch-start-btn").disabled=false;
+        document.getElementById("catch-start-btn").textContent="Færdig";
+        showResult(catchScore>0,"Catch: "+catchScore+" mønter = "+catchScore+" kr!",catchScore);
+        return;
+      }
+    }
+    if(frame%40===0)catchCoins.push({x:20+Math.random()*260,y:-20,vy:1.4+Math.random()*1,r:12});
+    for(var i=catchCoins.length-1;i>=0;i--){
+      catchCoins[i].y+=catchCoins[i].vy;
+      if(catchCoins[i].y+catchCoins[i].r>catchBasket.y&&catchCoins[i].y<catchBasket.y+30&&
+         catchCoins[i].x>catchBasket.x&&catchCoins[i].x<catchBasket.x+catchBasket.w){
+        catchScore++;catchCoins.splice(i,1);
+        if(navigator.vibrate)navigator.vibrate(10);
+        continue;
+      }
+      if(catchCoins[i].y>420)catchCoins.splice(i,1);
+    }
+    document.getElementById("catch-score").textContent="Mønter: "+catchScore+" · Tid: "+catchTime;
+    var g=ctx.createLinearGradient(0,0,0,400);g.addColorStop(0,"#1e3a5f");g.addColorStop(1,"#0f172a");
+    ctx.fillStyle=g;ctx.fillRect(0,0,300,400);
+    catchCoins.forEach(function(coin){
+      ctx.beginPath();ctx.arc(coin.x,coin.y,coin.r,0,Math.PI*2);
+      ctx.fillStyle="#fbbf24";ctx.fill();
+    });
+    ctx.fillStyle="#e8b923";ctx.fillRect(catchBasket.x,catchBasket.y,catchBasket.w,24);
+    ctx.fillStyle="#3d0000";ctx.fillRect(catchBasket.x+4,catchBasket.y+4,catchBasket.w-8,16);
+    catchAnim=requestAnimationFrame(loop);
+  }
+  loop();
+}
+var tapRunning=false,tapCount=0,tapTimeLeft=0,tapTimerId=null;
+function startTap(){
+  tapRunning=false;tapCount=0;
+  document.getElementById("tap-count").textContent="0";
+  document.getElementById("tap-earn").textContent="+0 kr";
+  document.getElementById("tap-timer").textContent="Tid: 8";
+  document.getElementById("tap-start-btn").disabled=false;
+  document.getElementById("tap-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+}
+function tapHit(){
+  if(!tapRunning)return;
+  tapCount++;
+  document.getElementById("tap-count").textContent=String(tapCount);
+  document.getElementById("tap-earn").textContent="+"+Math.floor(tapCount/5)+" kr";
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function tapStart(){
+  if(tapRunning)return;
+  tapRunning=true;tapCount=0;tapTimeLeft=8;
+  document.getElementById("tap-start-btn").disabled=true;
+  document.getElementById("tap-start-btn").textContent="Spiller...";
+  document.getElementById("tap-count").textContent="0";
+  document.getElementById("tap-earn").textContent="+0 kr";
+  document.getElementById("tap-timer").textContent="Tid: 8";
+  if(tapTimerId)clearInterval(tapTimerId);
+  tapTimerId=setInterval(function(){
+    tapTimeLeft--;
+    document.getElementById("tap-timer").textContent="Tid: "+tapTimeLeft;
+    if(tapTimeLeft<=0){
+      clearInterval(tapTimerId);tapRunning=false;
+      var win=Math.floor(tapCount/5);
+      document.getElementById("tap-start-btn").disabled=false;
+      document.getElementById("tap-start-btn").textContent="Færdig";
+      showResult(win>0,"Tap Race: "+tapCount+" taps = "+win+" kr!",win);
+    }
+  },1000);
+}
+function startDice(){
+  document.getElementById("dice-faces").textContent="🎲 🎲";
+  document.getElementById("dice-sum").textContent="";
+  document.getElementById("dice-roll-btn").disabled=false;
+  document.getElementById("dice-roll-btn").textContent="Slå";
+  document.getElementById("result-text").textContent="";
+}
+function diceRoll(){
+  var btn=document.getElementById("dice-roll-btn");
+  if(btn.disabled)return;
+  btn.disabled=true;btn.textContent="...";
+  var faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
+  var n=0;
+  var iv=setInterval(function(){
+    var a=1+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*6);
+    document.getElementById("dice-faces").textContent=faces[a-1]+" "+faces[b-1];
+    n++;
+    if(n>12){
+      clearInterval(iv);
+      var sum=a+b;
+      document.getElementById("dice-sum").textContent="Sum: "+sum;
+      btn.textContent="Færdig";
+      // payout: sum 8-9 = 8, 10-11 = 12, 12 = 20, else 0
+      var win=0;
+      if(sum>=12)win=20;else if(sum>=10)win=12;else if(sum>=8)win=8;
+      if(win>0)showResult(true,"Terning "+sum+" = "+win+" kr!",win);
+      else showResult(false,"Terning "+sum+" – ingen gevinst",0);
+    }
+  },80);
+}
+
+
+var dwheelSlices=[
+  {label:"0 💎",color:"#475569",amount:0},
+  {label:"+3 💎",color:"#0ea5e9",amount:3},
+  {label:"+5 💎",color:"#0284c7",amount:5},
+  {label:"0 💎",color:"#64748b",amount:0},
+  {label:"+8 💎",color:"#38bdf8",amount:8},
+  {label:"+2 💎",color:"#0369a1",amount:2},
+  {label:"0 💎",color:"#475569",amount:0},
+  {label:"+15 💎",color:"#a855f7",amount:15}
+];
+var dwheelAngle=0,dwheelSpinning=false;
+function openDiamondWheel(){
+  document.getElementById("dwheel-overlay").classList.add("show");
+  document.getElementById("dwheel-result").textContent="";
+  document.getElementById("dwheel-spin-btn").disabled=false;
+  drawDWheel(0);
+}
+function drawDWheel(angle){
+  var c=document.getElementById("dwheel-canvas");if(!c)return;
+  var ctx=c.getContext("2d"),cx=120,cy=120,r=110,slice=Math.PI*2/dwheelSlices.length;
+  ctx.clearRect(0,0,240,240);ctx.save();ctx.translate(cx,cy);ctx.rotate(angle);
+  for(var i=0;i<dwheelSlices.length;i++){
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,i*slice,(i+1)*slice);
+    ctx.fillStyle=dwheelSlices[i].color;ctx.fill();
+    ctx.strokeStyle="#e8b923";ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.rotate(i*slice+slice/2);ctx.textAlign="center";ctx.fillStyle="#fff";ctx.font="bold 12px Arial";
+    ctx.fillText(dwheelSlices[i].label,r*0.62,4);ctx.restore();
+  }
+  ctx.restore();
+  ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fillStyle="#1a0000";ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fillStyle="#38bdf8";ctx.fill();
+}
+function spinDiamondWheel(){
+  if(dwheelSpinning)return;
+  if(!currentAccount){alert("Log ind først");return}
+  if(currentAccount.freeDwheel&&currentAccount.freeDwheel>0){
+    currentAccount.freeDwheel--;
+    saveCurrentAccount();
+  } else {
+    if(diamondBalance<10){alert("Du skal bruge 10 💎");return}
+    updateDiamonds(-10);refreshShopUI();
+  }
+  dwheelSpinning=true;document.getElementById("dwheel-spin-btn").disabled=true;
+  // house edge: more zeros
+  var rand=Math.random(),ri;
+  if(rand<0.28)ri=0;else if(rand<0.50)ri=3;else if(rand<0.68)ri=6;
+  else if(rand<0.80)ri=5;else if(rand<0.90)ri=1;else if(rand<0.96)ri=2;
+  else if(rand<0.99)ri=4;else ri=7;
+  var slice=Math.PI*2/dwheelSlices.length,target=Math.PI*2*5+(Math.PI*1.5-(ri*slice+slice/2));
+  var cur=dwheelAngle,t0=performance.now();
+  (function anim(now){
+    var t=Math.min((now-t0)/4000,1);
+    dwheelAngle=cur+(target-cur)*(1-Math.pow(1-t,3));
+    drawDWheel(dwheelAngle);
+    if(t<1)requestAnimationFrame(anim);
+    else{
+      dwheelSpinning=false;
+      var res=dwheelSlices[ri],el=document.getElementById("dwheel-result");
+      if(res.amount>0){
+        el.textContent="Du vandt "+res.amount+" 💎";el.style.color="#38bdf8";
+        updateDiamonds(res.amount);refreshShopUI();
+      } else {
+        el.textContent="Ingen gevinst";el.style.color="#f87171";
+      }
+      document.getElementById("dwheel-spin-btn").disabled=false;
+    }
+  })(t0);
+}
+
+drawWheel(0);document.getElementById("wheel-overlay").classList.add("show")}
+function startGame(){document.getElementById("wheel-overlay").classList.remove("show");document.getElementById("play-overlay").classList.add("show");document.getElementById("play-title").textContent=selectedName+(freeReplay||freeSkattejagt?" (GRATIS)":"")+(ticketsLeft>1?" · Lod "+(buyQty-ticketsLeft+1)+"/"+buyQty:"");document.getElementById("result-text").textContent="";document.getElementById("result-text").className="result-text";document.getElementById("play-actions").innerHTML='<button class="btn-secondary" onclick="closeOverlays()">Tilbage</button>';scratched=false;gameWon=false;["scratch-area","grid-area","chests-area","mini-area","plinko-area","box-area","catch-area","tap-area","dice-area","slots-area"].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display="none"});if(selectedType==="scratch"){document.getElementById("scratch-area").style.display="block";document.getElementById("play-instruction").textContent="Skrab her";startScratchGame()}else if(selectedType==="grid"){document.getElementById("grid-area").style.display="block";document.getElementById("play-instruction").textContent="3 på stribe";startGridGame()}else if(selectedType==="chests"){document.getElementById("chests-area").style.display="block";document.getElementById("play-instruction").textContent="Find 2 ens";startChestsGame()}else if(selectedType==="plinko"){document.getElementById("plinko-area").style.display="block";document.getElementById("play-instruction").textContent="Drop bolden";startPlinkoGame()}else if(selectedType==="catch"){document.getElementById("catch-area").style.display="block";document.getElementById("play-instruction").textContent="Fang mønter";startCatch()}else if(selectedType==="tap"){document.getElementById("tap-area").style.display="block";document.getElementById("play-instruction").textContent="Tap så hurtigt du kan";startTap()}else if(selectedType==="dice"){document.getElementById("dice-area").style.display="block";document.getElementById("play-instruction").textContent="Slå terningerne";startDice()}else{document.getElementById("mini-area").style.display="block";document.getElementById("play-instruction").textContent="Match 2";startMiniGame()}}
+function startBoxGame(){document.getElementById("play-overlay").classList.add("show");document.getElementById("play-title").textContent=BOXES[currentBox].name;document.getElementById("play-instruction").textContent="Tryk Åbn – du vinder altid noget!";document.getElementById("result-text").textContent="";document.getElementById("case-result").textContent="";document.getElementById("play-actions").innerHTML='<button class="btn-secondary" onclick="closeOverlays()">Tilbage</button>';["scratch-area","grid-area","chests-area","mini-area","plinko-area","box-area","catch-area","tap-area","dice-area","slots-area"].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display="none"});document.getElementById("box-area").style.display="block";document.getElementById("case-spin-btn").disabled=false;document.getElementById("case-spin-btn").textContent="Åbn box";buildCaseTrack()}
+function weightedIndex(w){var t=w.reduce(function(a,b){return a+b},0),r=Math.random()*t;for(var i=0;i<w.length;i++){r-=w[i];if(r<=0)return i}return w.length-1}
+function tierClass(v,prizes){var i=prizes.indexOf(v);if(i>=5)return"tier-top";if(i>=3)return"tier-high";if(i>=1)return"tier-mid";return"tier-low"}
+function buildCaseTrack(){var b=BOXES[currentBox],track=document.getElementById("case-track");track.innerHTML="";track.style.transition="none";track.style.transform="translateX(0)";var items=[];for(var i=0;i<60;i++)items.push(b.prizes[weightedIndex(b.weights)]);var winPrize=b.prizes[weightedIndex(b.weights)];items[52]=winPrize;window._caseWinPrize=winPrize;window._caseWinIndex=52;items.forEach(function(v){var el=document.createElement("div");el.className="case-item "+tierClass(v,b.prizes);el.innerHTML='<div class="ci-emoji">'+(v>=b.prizes[5]?"💎":v>=b.prizes[3]?"⭐":"🪙")+'</div><div class="ci-val">'+v+" kr</div>";track.appendChild(el)})}
+function spinCase(){if(caseSpinning)return;caseSpinning=true;document.getElementById("case-spin-btn").disabled=true;document.getElementById("case-result").textContent="Åbner...";var track=document.getElementById("case-track"),itemW=100,stageW=document.querySelector(".case-stage").offsetWidth;var targetX=-(window._caseWinIndex*itemW-stageW/2+itemW/2);track.style.transition="none";track.style.transform="translateX(0)";void track.offsetWidth;track.style.transition="transform 4.5s cubic-bezier(0.12,0.75,0.12,1)";track.style.transform="translateX("+targetX+"px)";setTimeout(function(){caseSpinning=false;var prize=window._caseWinPrize;document.getElementById("case-result").innerHTML='<span style="color:#4ade80">Du vandt '+prize+" kr!</span>";showResult(true,"Box åbnet – "+prize+" kr!",prize);document.getElementById("case-spin-btn").textContent="Færdig"},4600)}
+function triggerWinEffects(){var box=document.getElementById("play-box");if(box){box.classList.remove("shake");void box.offsetWidth;box.classList.add("shake");setTimeout(function(){box.classList.remove("shake")},850)}spawnConfetti();if(navigator.vibrate)navigator.vibrate([70,40,70,40,100])}
+function spawnConfetti(){var colors=["#22c55e","#f59e0b","#a855f7","#ef4444","#fbbf24","#fff"];var c=document.createElement("div");c.className="confetti";document.body.appendChild(c);for(var i=0;i<80;i++){var p=document.createElement("div");p.className="confetti-piece";p.style.left=Math.random()*100+"%";p.style.background=colors[Math.floor(Math.random()*colors.length)];p.style.animationDuration=(1.2+Math.random()*2)+"s";p.style.animationDelay=Math.random()*.5+"s";p.style.width=(5+Math.random()*10)+"px";p.style.height=(5+Math.random()*10)+"px";c.appendChild(p)}setTimeout(function(){c.remove()},4000)}
+function showResult(won,text,winAmount){var el=document.getElementById("result-text");el.textContent=text;el.className="result-text "+(won?"result-win":"result-lose");gameWon=won;if(isFirstPlay){isFirstPlay=false;if(currentAccount){currentAccount.firstPlay=false}}
+  if(won){triggerWinEffects();if(winAmount>0){var pay=Math.round(winAmount*goldRushMultiplier()*premiumMult());if(goldRushMultiplier()>1||premiumMult()>1){
+      var tags=[];
+      if(goldRushMultiplier()>1)tags.push("x2 GoldRush");
+      if(premiumMult()>1)tags.push("x1.5 Premium");
+      text=text+" ("+tags.join(" · ")+")";
+      document.getElementById("result-text").textContent=text;
+    }updateCoins(pay)}
+    if(currentAccount){notifyAdminWin(currentAccount.name, text||selectedName+" gevinst", winAmount||0)}
+  } else if(currentAccount){
+    notifyAdminWin(currentAccount.name, (text||"Tab")+" – "+selectedName, 0);
+  }
+  // Tjen diamanter for spillet (baseret på lod-pris)
+  if(!freeReplay&&!freeSkattejagt&&selectedType!=="box"){
+    var earn=diamondsForPlay(unitPrice||selectedPrice||5);
+    if(earn>0){updateDiamonds(earn)}
+  } else if(selectedType==="box"&&!freeReplay){
+    var earnB=diamondsForPlay(selectedPrice||10);
+    if(earnB>0){updateDiamonds(earnB)}
+  }
+  saveCurrentAccount();ticketsLeft=Math.max(0,ticketsLeft-1);
+  var extra="";
+  if(ticketsLeft>0){
+    extra='<button class="btn-green" onclick="playNextTicket()">Næste lod ('+ticketsLeft+' tilbage)</button>';
+    document.getElementById("play-actions").innerHTML=extra+'<button class="btn-secondary" onclick="closeOverlays()">Tilbage</button>';
+  } else if(!won&&!lastWheelShown&&selectedType!=="box"){
+    document.getElementById("play-actions").innerHTML='<button class="btn-purple" onclick="showWheelFromPlay()">Lykkehjul</button><button class="btn-secondary" onclick="closeOverlays()">Tilbage</button>';
+  } else {
+    lastWheelShown=false;
+    document.getElementById("play-actions").innerHTML='<button class="btn-secondary" onclick="closeOverlays()">Tilbage</button>';
+  }
+}
+function showWheelFromPlay(){lastWheelShown=true;document.getElementById("play-overlay").classList.remove("show");document.getElementById("wheel-intro").textContent="Prøv hjulet gratis!";document.getElementById("wheel-result").textContent="";document.getElementById("spin-btn").disabled=false;
+var flappyRunning=false,flappyAnim=null,flappyScore=0,flappyBird,flappyPipes,flappyDead;
+function startFlappy(){flappyRunning=false;flappyScore=0;document.getElementById("flappy-score").textContent="Score: 0";document.getElementById("flappy-start-btn").disabled=false;document.getElementById("flappy-start-btn").textContent="Start";document.getElementById("result-text").textContent="";var c=document.getElementById("flappy-canvas"),ctx=c.getContext("2d");ctx.fillStyle="#70c5ce";ctx.fillRect(0,0,300,400);ctx.fillStyle="#fff";ctx.font="bold 16px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,200);c.onclick=function(){if(flappyRunning)flappyBird.vy=-5.2};c.ontouchstart=function(e){e.preventDefault();if(flappyRunning)flappyBird.vy=-5.2}}
+function flappyStart(){if(flappyRunning)return;flappyRunning=true;flappyDead=false;flappyScore=0;flappyBird={x:70,y:200,vy:0,r:12};flappyPipes=[];document.getElementById("flappy-start-btn").disabled=true;document.getElementById("flappy-start-btn").textContent="Spiller...";var c=document.getElementById("flappy-canvas"),ctx=c.getContext("2d"),frame=0;
+function spawn(){var gap=110,top=40+Math.random()*160;flappyPipes.push({x:320,top:top,gap:gap,passed:false})}
+function loop(){if(!flappyRunning)return;frame++;flappyBird.vy+=0.28;flappyBird.y+=flappyBird.vy;if(frame%90===0)spawn();for(var i=flappyPipes.length-1;i>=0;i--){flappyPipes[i].x-=2.4;if(!flappyPipes[i].passed&&flappyPipes[i].x+40<flappyBird.x){flappyPipes[i].passed=true;flappyScore++;document.getElementById("flappy-score").textContent="Score: "+flappyScore+" (+"+flappyScore+" kr)";if(navigator.vibrate)navigator.vibrate(15)}if(flappyPipes[i].x<-50)flappyPipes.splice(i,1)}
+for(var i=0;i<flappyPipes.length;i++){var p=flappyPipes[i];if(flappyBird.x+flappyBird.r>p.x&&flappyBird.x-flappyBird.r<p.x+40){if(flappyBird.y-flappyBird.r<p.top||flappyBird.y+flappyBird.r>p.top+p.gap){flappyDead=true}}}
+if(flappyBird.y>400-flappyBird.r||flappyBird.y<flappyBird.r)flappyDead=true;
+ctx.fillStyle="#70c5ce";ctx.fillRect(0,0,300,400);ctx.fillStyle="#5a8f3c";ctx.fillRect(0,380,300,20);flappyPipes.forEach(function(p){ctx.fillStyle="#5a8f3c";ctx.fillRect(p.x,0,40,p.top);ctx.fillRect(p.x,p.top+p.gap,40,400-(p.top+p.gap));ctx.fillStyle="#73bf2e";ctx.fillRect(p.x-2,p.top-16,44,16);ctx.fillRect(p.x-2,p.top+p.gap,44,16)});ctx.beginPath();ctx.arc(flappyBird.x,flappyBird.y,flappyBird.r,0,Math.PI*2);ctx.fillStyle="#fbbf24";ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(flappyBird.x+4,flappyBird.y-3,3,0,Math.PI*2);ctx.fill();
+if(flappyDead){flappyRunning=false;document.getElementById("flappy-start-btn").disabled=false;document.getElementById("flappy-start-btn").textContent="Færdig";showResult(flappyScore>0,"Flappy: "+flappyScore+" rør = "+flappyScore+" kr!",flappyScore);return}
+flappyAnim=requestAnimationFrame(loop)}
+loop()}
+var snakeRunning=false,snakeAnim=null,snakeScore=0,snake,snakeDir,snakeFood,snakeGrid=15,snakeCell=20;
+function startSnake(){snakeRunning=false;snakeScore=0;document.getElementById("snake-score").textContent="Æbler: 0";document.getElementById("snake-start-btn").disabled=false;document.getElementById("snake-start-btn").textContent="Start";document.getElementById("result-text").textContent="";var c=document.getElementById("snake-canvas"),ctx=c.getContext("2d");ctx.fillStyle="#0f172a";ctx.fillRect(0,0,300,300);ctx.fillStyle="#fff";ctx.font="bold 16px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,150);
+document.onkeydown=function(e){if(!snakeRunning)return;if(e.key==="ArrowUp"&&snakeDir.y===0)snakeDir={x:0,y:-1};if(e.key==="ArrowDown"&&snakeDir.y===0)snakeDir={x:0,y:1};if(e.key==="ArrowLeft"&&snakeDir.x===0)snakeDir={x:-1,y:0};if(e.key==="ArrowRight"&&snakeDir.x===0)snakeDir={x:1,y:0}};
+var tx=0,ty=0;c.ontouchstart=function(e){e.preventDefault();tx=e.touches[0].clientX;ty=e.touches[0].clientY};c.ontouchend=function(e){if(!snakeRunning)return;var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>Math.abs(dy)){if(dx>20&&snakeDir.x===0)snakeDir={x:1,y:0};if(dx<-20&&snakeDir.x===0)snakeDir={x:-1,y:0}}else{if(dy>20&&snakeDir.y===0)snakeDir={x:0,y:1};if(dy<-20&&snakeDir.y===0)snakeDir={x:0,y:-1}}}}
+function snakeStart(){if(snakeRunning)return;snakeRunning=true;snakeScore=0;snake=[{x:7,y:7},{x:6,y:7},{x:5,y:7}];snakeDir={x:1,y:0};snakeFood={x:10,y:10};document.getElementById("snake-start-btn").disabled=true;document.getElementById("snake-start-btn").textContent="Spiller...";var c=document.getElementById("snake-canvas"),ctx=c.getContext("2d"),tick=0;
+function placeFood(){do{snakeFood={x:Math.floor(Math.random()*snakeGrid),y:Math.floor(Math.random()*snakeGrid)}}while(snake.some(function(s){return s.x===snakeFood.x&&s.y===snakeFood.y}))}
+function loop(){if(!snakeRunning)return;tick++;if(tick%8===0){var head={x:snake[0].x+snakeDir.x,y:snake[0].y+snakeDir.y};if(head.x<0||head.y<0||head.x>=snakeGrid||head.y>=snakeGrid||snake.some(function(s){return s.x===head.x&&s.y===head.y})){snakeRunning=false;document.getElementById("snake-start-btn").disabled=false;document.getElementById("snake-start-btn").textContent="Færdig";showResult(snakeScore>0,"Snake: "+snakeScore+" æbler = "+snakeScore+" kr!",snakeScore);return}snake.unshift(head);if(head.x===snakeFood.x&&head.y===snakeFood.y){snakeScore++;document.getElementById("snake-score").textContent="Æbler: "+snakeScore+" (+"+snakeScore+" kr)";placeFood();if(navigator.vibrate)navigator.vibrate(20)}else snake.pop()}
+ctx.fillStyle="#0f172a";ctx.fillRect(0,0,300,300);ctx.fillStyle="#ef4444";ctx.fillRect(snakeFood.x*snakeCell+2,snakeFood.y*snakeCell+2,snakeCell-4,snakeCell-4);snake.forEach(function(s,i){ctx.fillStyle=i===0?"#4ade80":"#22c55e";ctx.fillRect(s.x*snakeCell+1,s.y*snakeCell+1,snakeCell-2,snakeCell-2)});snakeAnim=requestAnimationFrame(loop)}
+loop()}
+
+
+var catchRunning=false,catchScore=0,catchBasket,catchCoins,catchTime,catchAnim;
+function startCatch(){
+  catchRunning=false;catchScore=0;
+  document.getElementById("catch-score").textContent="Mønter: 0 · Tid: 20";
+  document.getElementById("catch-start-btn").disabled=false;
+  document.getElementById("catch-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d");
+  ctx.fillStyle="#1e3a5f";ctx.fillRect(0,0,300,400);
+  ctx.fillStyle="#fff";ctx.font="bold 18px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,200);
+}
+function catchStart(){
+  if(catchRunning)return;
+  catchRunning=true;catchScore=0;catchTime=20;
+  catchBasket={x:120,w:70,y:360};catchCoins=[];
+  document.getElementById("catch-start-btn").disabled=true;
+  document.getElementById("catch-start-btn").textContent="Spiller...";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d"),frame=0,last=Date.now();
+  function setX(clientX){
+    var rect=c.getBoundingClientRect();
+    var x=(clientX-rect.left)*(300/rect.width);
+    catchBasket.x=Math.max(0,Math.min(300-catchBasket.w,x-catchBasket.w/2));
+  }
+  c.onmousemove=function(e){if(catchRunning)setX(e.clientX)};
+  c.ontouchmove=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  c.ontouchstart=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  function loop(){
+    if(!catchRunning)return;
+    frame++;
+    var now=Date.now();
+    if(now-last>=1000){
+      catchTime--;last=now;
+      if(catchTime<=0){
+        catchRunning=false;
+        document.getElementById("catch-start-btn").disabled=false;
+        document.getElementById("catch-start-btn").textContent="Færdig";
+        showResult(catchScore>0,"Catch: "+catchScore+" mønter = "+catchScore+" kr!",catchScore);
+        return;
+      }
+    }
+    if(frame%40===0)catchCoins.push({x:20+Math.random()*260,y:-20,vy:1.4+Math.random()*1,r:12});
+    for(var i=catchCoins.length-1;i>=0;i--){
+      catchCoins[i].y+=catchCoins[i].vy;
+      if(catchCoins[i].y+catchCoins[i].r>catchBasket.y&&catchCoins[i].y<catchBasket.y+30&&
+         catchCoins[i].x>catchBasket.x&&catchCoins[i].x<catchBasket.x+catchBasket.w){
+        catchScore++;catchCoins.splice(i,1);
+        if(navigator.vibrate)navigator.vibrate(10);
+        continue;
+      }
+      if(catchCoins[i].y>420)catchCoins.splice(i,1);
+    }
+    document.getElementById("catch-score").textContent="Mønter: "+catchScore+" · Tid: "+catchTime;
+    var g=ctx.createLinearGradient(0,0,0,400);g.addColorStop(0,"#1e3a5f");g.addColorStop(1,"#0f172a");
+    ctx.fillStyle=g;ctx.fillRect(0,0,300,400);
+    catchCoins.forEach(function(coin){
+      ctx.beginPath();ctx.arc(coin.x,coin.y,coin.r,0,Math.PI*2);
+      ctx.fillStyle="#fbbf24";ctx.fill();
+    });
+    ctx.fillStyle="#e8b923";ctx.fillRect(catchBasket.x,catchBasket.y,catchBasket.w,24);
+    ctx.fillStyle="#3d0000";ctx.fillRect(catchBasket.x+4,catchBasket.y+4,catchBasket.w-8,16);
+    catchAnim=requestAnimationFrame(loop);
+  }
+  loop();
+}
+var tapRunning=false,tapCount=0,tapTimeLeft=0,tapTimerId=null;
+function startTap(){
+  tapRunning=false;tapCount=0;
+  document.getElementById("tap-count").textContent="0";
+  document.getElementById("tap-earn").textContent="+0 kr";
+  document.getElementById("tap-timer").textContent="Tid: 8";
+  document.getElementById("tap-start-btn").disabled=false;
+  document.getElementById("tap-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+}
+function tapHit(){
+  if(!tapRunning)return;
+  tapCount++;
+  document.getElementById("tap-count").textContent=String(tapCount);
+  document.getElementById("tap-earn").textContent="+"+Math.floor(tapCount/5)+" kr";
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function tapStart(){
+  if(tapRunning)return;
+  tapRunning=true;tapCount=0;tapTimeLeft=8;
+  document.getElementById("tap-start-btn").disabled=true;
+  document.getElementById("tap-start-btn").textContent="Spiller...";
+  document.getElementById("tap-count").textContent="0";
+  document.getElementById("tap-earn").textContent="+0 kr";
+  document.getElementById("tap-timer").textContent="Tid: 8";
+  if(tapTimerId)clearInterval(tapTimerId);
+  tapTimerId=setInterval(function(){
+    tapTimeLeft--;
+    document.getElementById("tap-timer").textContent="Tid: "+tapTimeLeft;
+    if(tapTimeLeft<=0){
+      clearInterval(tapTimerId);tapRunning=false;
+      var win=Math.floor(tapCount/5);
+      document.getElementById("tap-start-btn").disabled=false;
+      document.getElementById("tap-start-btn").textContent="Færdig";
+      showResult(win>0,"Tap Race: "+tapCount+" taps = "+win+" kr!",win);
+    }
+  },1000);
+}
+function startDice(){
+  document.getElementById("dice-faces").textContent="🎲 🎲";
+  document.getElementById("dice-sum").textContent="";
+  document.getElementById("dice-roll-btn").disabled=false;
+  document.getElementById("dice-roll-btn").textContent="Slå";
+  document.getElementById("result-text").textContent="";
+}
+function diceRoll(){
+  var btn=document.getElementById("dice-roll-btn");
+  if(btn.disabled)return;
+  btn.disabled=true;btn.textContent="...";
+  var faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
+  var n=0;
+  var iv=setInterval(function(){
+    var a=1+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*6);
+    document.getElementById("dice-faces").textContent=faces[a-1]+" "+faces[b-1];
+    n++;
+    if(n>12){
+      clearInterval(iv);
+      var sum=a+b;
+      document.getElementById("dice-sum").textContent="Sum: "+sum;
+      btn.textContent="Færdig";
+      // payout: sum 8-9 = 8, 10-11 = 12, 12 = 20, else 0
+      var win=0;
+      if(sum>=12)win=20;else if(sum>=10)win=12;else if(sum>=8)win=8;
+      if(win>0)showResult(true,"Terning "+sum+" = "+win+" kr!",win);
+      else showResult(false,"Terning "+sum+" – ingen gevinst",0);
+    }
+  },80);
+}
+
+
+var dwheelSlices=[
+  {label:"0 💎",color:"#475569",amount:0},
+  {label:"+3 💎",color:"#0ea5e9",amount:3},
+  {label:"+5 💎",color:"#0284c7",amount:5},
+  {label:"0 💎",color:"#64748b",amount:0},
+  {label:"+8 💎",color:"#38bdf8",amount:8},
+  {label:"+2 💎",color:"#0369a1",amount:2},
+  {label:"0 💎",color:"#475569",amount:0},
+  {label:"+15 💎",color:"#a855f7",amount:15}
+];
+var dwheelAngle=0,dwheelSpinning=false;
+function openDiamondWheel(){
+  document.getElementById("dwheel-overlay").classList.add("show");
+  document.getElementById("dwheel-result").textContent="";
+  document.getElementById("dwheel-spin-btn").disabled=false;
+  drawDWheel(0);
+}
+function drawDWheel(angle){
+  var c=document.getElementById("dwheel-canvas");if(!c)return;
+  var ctx=c.getContext("2d"),cx=120,cy=120,r=110,slice=Math.PI*2/dwheelSlices.length;
+  ctx.clearRect(0,0,240,240);ctx.save();ctx.translate(cx,cy);ctx.rotate(angle);
+  for(var i=0;i<dwheelSlices.length;i++){
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,i*slice,(i+1)*slice);
+    ctx.fillStyle=dwheelSlices[i].color;ctx.fill();
+    ctx.strokeStyle="#e8b923";ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.rotate(i*slice+slice/2);ctx.textAlign="center";ctx.fillStyle="#fff";ctx.font="bold 12px Arial";
+    ctx.fillText(dwheelSlices[i].label,r*0.62,4);ctx.restore();
+  }
+  ctx.restore();
+  ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fillStyle="#1a0000";ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fillStyle="#38bdf8";ctx.fill();
+}
+function spinDiamondWheel(){
+  if(dwheelSpinning)return;
+  if(diamondBalance<10){alert("Du skal bruge 10 💎");return}
+  updateDiamonds(-10);refreshShopUI();
+  dwheelSpinning=true;document.getElementById("dwheel-spin-btn").disabled=true;
+  // house edge: more zeros
+  var rand=Math.random(),ri;
+  if(rand<0.28)ri=0;else if(rand<0.50)ri=3;else if(rand<0.68)ri=6;
+  else if(rand<0.80)ri=5;else if(rand<0.90)ri=1;else if(rand<0.96)ri=2;
+  else if(rand<0.99)ri=4;else ri=7;
+  var slice=Math.PI*2/dwheelSlices.length,target=Math.PI*2*5+(Math.PI*1.5-(ri*slice+slice/2));
+  var cur=dwheelAngle,t0=performance.now();
+  (function anim(now){
+    var t=Math.min((now-t0)/4000,1);
+    dwheelAngle=cur+(target-cur)*(1-Math.pow(1-t,3));
+    drawDWheel(dwheelAngle);
+    if(t<1)requestAnimationFrame(anim);
+    else{
+      dwheelSpinning=false;
+      var res=dwheelSlices[ri],el=document.getElementById("dwheel-result");
+      if(res.amount>0){
+        el.textContent="Du vandt "+res.amount+" 💎";el.style.color="#38bdf8";
+        updateDiamonds(res.amount);refreshShopUI();
+      } else {
+        el.textContent="Ingen gevinst";el.style.color="#f87171";
+      }
+      document.getElementById("dwheel-spin-btn").disabled=false;
+    }
+  })(t0);
+}
+
+drawWheel(0);document.getElementById("wheel-overlay").classList.add("show")}
+function drawWheel(angle){var c=document.getElementById("wheel-canvas"),ctx=c.getContext("2d"),cx=120,cy=120,r=110,slice=Math.PI*2/wheelSlices.length;ctx.clearRect(0,0,240,240);ctx.save();ctx.translate(cx,cy);ctx.rotate(angle);for(var i=0;i<wheelSlices.length;i++){ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,i*slice,(i+1)*slice);ctx.fillStyle=wheelSlices[i].color;ctx.fill();ctx.strokeStyle="#e8b923";ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.rotate(i*slice+slice/2);ctx.textAlign="center";ctx.fillStyle="#fff";ctx.font="bold 10px Arial";var lines=wheelSlices[i].label.split("\n");for(var idx=0;idx<lines.length;idx++)ctx.fillText(lines[idx],r*.6,(idx-(lines.length-1)/2)*11);ctx.restore()}ctx.restore();ctx.beginPath();ctx.arc(cx,cy,16,0,Math.PI*2);ctx.fillStyle="#1a0000";ctx.fill();ctx.beginPath();ctx.arc(cx,cy,10,0,Math.PI*2);ctx.fillStyle="#e8b923";ctx.fill()}
+
+function openArcadeWheel(){
+  if(!currentAccount){alert("Log ind først");return}
+  if(!canSpinWheel()){alert("Lykkehjul kun 1 gang hver 3. dag. Prøv igen om "+wheelCooldownLeft());return}
+  if(coinBalance<5){alert("Hjulet koster 5 chips");return}
+  document.getElementById("wheel-overlay").classList.add("show");
+  document.getElementById("wheel-result").textContent="";
+  document.getElementById("spin-btn").disabled=false;
+  var intro=document.getElementById("wheel-intro");
+  if(intro)intro.textContent="Kost: 5 chips · 1 spin / 3 dage";
+  drawWheel(wheelAngle||0);
+}
+
+function spinWheel(){
+  if(wheelSpinning)return;
+  if(!currentAccount){alert("Log ind først");return}
+  if(!canSpinWheel()){alert("Lykkehjul kun 1 gang hver 3. dag. Prøv igen om "+wheelCooldownLeft());return}
+  if(coinBalance<5){alert("Hjulet koster 5 chips");return}
+  updateCoins(-5);
+  trackGambled(5);
+  if(!currentAccount.admin)notifyAdminSpend(currentAccount.name,"Lykkehjul (5 chips)",5);
+  wheelSpinning=true;
+  document.getElementById("spin-btn").disabled=true;
+  markWheelSpun();
+  var rand=Math.random(),ri;
+  // 0 nothing, 1 +2dia, 2 nothing, 3 replay, 4 +5dia, 5 ticket5, 6 +1dia, 7 +5 chips
+  if(rand<0.10)ri=3;
+  else if(rand<0.20)ri=5;
+  else if(rand<0.32)ri=6;
+  else if(rand<0.42)ri=1;
+  else if(rand<0.50)ri=4;
+  else if(rand<0.58)ri=7;
+  else ri=[0,2][Math.floor(Math.random()*2)];
+  var slice=Math.PI*2/wheelSlices.length,target=Math.PI*2*5+(Math.PI*1.5-(ri*slice+slice/2)),cur=wheelAngle,t0=performance.now();
+  (function anim(now){
+    var t=Math.min((now-t0)/4000,1);
+    wheelAngle=cur+(target-cur)*(1-Math.pow(1-t,3));
+    drawWheel(wheelAngle);
+    if(t<1)requestAnimationFrame(anim);
+    else{
+      wheelSpinning=false;
+      var res=wheelSlices[ri],el=document.getElementById("wheel-result");
+      if(res.type==="nothing"){el.textContent="Ingen gevinst";el.style.color="#f87171"}
+      else if(res.type==="diamonds"){el.textContent="+"+res.amount+" 💎";el.style.color="#38bdf8";updateDiamonds(res.amount);if(navigator.vibrate)navigator.vibrate(40)}
+      else if(res.type==="chips"){el.textContent="+"+res.amount+" chips";el.style.color="#c4b5fd";updateCoins(res.amount)}
+      else if(res.type==="ticket5"){
+        el.textContent="5 kr skrabbelod GRATIS!";el.style.color="#fbbf24";
+        freeReplay=true;selectedName="Lynskrab";selectedPrice=5;selectedType="mini";unitPrice=5;
+        setTimeout(startGame,1400);
+      }
+      else if(res.type==="replay"){
+        el.textContent="Gratis lod!";el.style.color="#4ade80";
+        freeReplay=true;
+        if(!selectedType){selectedName="Skrabbelod";selectedPrice=7;selectedType="scratch";unitPrice=7}
+        setTimeout(startGame,1400);
+      }
+      document.getElementById("spin-btn").disabled=false;
+    }
+  })(t0);
+}
+
+function startScratchGame(){var prize=genScratch(selectedPrice);document.getElementById("prize-layer").innerHTML=prize.text;canvas=document.getElementById("scratch-canvas");ctx=canvas.getContext("2d");ctx.globalCompositeOperation="source-over";var g=ctx.createLinearGradient(0,0,280,170);g.addColorStop(0,"#94a3b8");g.addColorStop(1,"#64748b");ctx.fillStyle=g;ctx.fillRect(0,0,280,170);ctx.fillStyle="#334155";ctx.font="bold 18px Arial";ctx.textAlign="center";ctx.fillText("SKRAB HER",140,85);ctx.globalCompositeOperation="destination-out";ctx.lineWidth=38;ctx.lineCap="round";canvas.onmousedown=function(e){startDraw(e,ctx,canvas,checkScratch)};canvas.onmousemove=function(e){draw(e,ctx,canvas,checkScratch)};canvas.onmouseup=endDraw;canvas.onmouseleave=endDraw;canvas.ontouchstart=function(e){e.preventDefault();startDraw(e.touches[0],ctx,canvas,checkScratch)};canvas.ontouchmove=function(e){e.preventDefault();draw(e.touches[0],ctx,canvas,checkScratch)};canvas.ontouchend=endDraw}
+function genScratch(price){if(isFirstPlay)return{text:"Du vandt<br>"+price+" kr",win:true,amount:price};var r=Math.random();if(r<.7)return{text:"Desværre<br>ingen gevinst",win:false,amount:0};if(r<.88)return{text:"Du vandt<br>"+Math.floor(price*.5)+" kr",win:true,amount:Math.floor(price*.5)};if(r<.97)return{text:"Du vandt<br>"+price+" kr",win:true,amount:price};if(r<.995)return{text:"Du vandt<br>"+Math.floor(price*1.5)+" kr",win:true,amount:Math.floor(price*1.5)};return{text:"JACKPOT!<br>"+(price*3)+" kr",win:true,amount:price*3}}
+function checkScratch(){if(scratched)return;var d=ctx.getImageData(0,0,280,170),t=0;for(var i=3;i<d.data.length;i+=4)if(d.data[i]===0)t++;if(t/(280*170)>.42){scratched=true;ctx.clearRect(0,0,280,170);var txt=document.getElementById("prize-layer").innerText,win=txt.indexOf("ingen")<0,a=0,m=txt.match(/(\d+)\s*kr/);if(m)a=+m[1];showResult(win,win?"Tillykke!":"Bedre held",a)}}
+function startMiniGame(){miniPrizes=[];cellRevealed=[false,false,false];gameWon=false;cellCanvases=[];if(isFirstPlay){miniPrizes=[5,5,Math.random()<.5?"Tom":10];shuffle(miniPrizes)}else{for(var i=0;i<3;i++){var r=Math.random();miniPrizes.push(r<.65?"Tom":r<.9?5:10)}}var g=document.getElementById("mini-grid");g.innerHTML="";for(var i=0;i<3;i++){var cell=document.createElement("div");cell.className="mini-cell";var pd=document.createElement("div");pd.className="cell-prize";pd.id="mini-prize-"+i;pd.textContent=typeof miniPrizes[i]==="number"?miniPrizes[i]+" kr":miniPrizes[i];var cv=document.createElement("canvas");cv.className="cell-canvas";cv.width=84;cv.height=84;var c=cv.getContext("2d");c.fillStyle="#94a3b8";c.fillRect(0,0,84,84);c.fillStyle="#334155";c.font="bold 11px Arial";c.textAlign="center";c.fillText("SKRAB",42,48);c.globalCompositeOperation="destination-out";c.lineWidth=22;c.lineCap="round";cell.appendChild(pd);cell.appendChild(cv);g.appendChild(cell);cellCanvases.push({canvas:cv,ctx:c,index:i});bindCell(i,function(idx){return function(){checkMini(idx)}}(i))}}
+function checkMini(i){if(cellRevealed[i]||gameWon)return;var o=cellCanvases[i],d=o.ctx.getImageData(0,0,84,84),t=0;for(var j=3;j<d.data.length;j+=4)if(d.data[j]===0)t++;if(t/(84*84)>.4){cellRevealed[i]=true;o.ctx.clearRect(0,0,84,84);var counts={};for(var k=0;k<3;k++)if(cellRevealed[k]&&typeof miniPrizes[k]==="number")counts[miniPrizes[k]]=(counts[miniPrizes[k]]||0)+1;for(var n in counts){if(counts[n]>=2){gameWon=true;for(var k=0;k<3;k++)if(miniPrizes[k]==n&&cellRevealed[k])document.getElementById("mini-prize-"+k).classList.add("win-highlight");showResult(true,"2 × "+n+" kr!",+n);return}}if(cellRevealed.every(function(v){return v})&&!gameWon)showResult(false,"Bedre held",0)}}
+function startGridGame(){gridPrizes=[];cellRevealed=Array(9).fill(false);gameWon=false;cellCanvases=[];if(isFirstPlay){var lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]],wl=lines[Math.floor(Math.random()*8)];for(var i=0;i<9;i++)gridPrizes[i]=wl.indexOf(i)>=0?20:(Math.random()<.6?"Ingen":10)}else{for(var i=0;i<9;i++){var r=Math.random();gridPrizes[i]=r<.62?"Ingen":r<.82?10:r<.98?20:50}}var g=document.getElementById("grid-3x3");g.innerHTML="";for(var i=0;i<9;i++){var cell=document.createElement("div");cell.className="scratch-cell";var pd=document.createElement("div");pd.className="cell-prize";pd.id="prize-"+i;pd.textContent=typeof gridPrizes[i]==="number"?gridPrizes[i]+" kr":gridPrizes[i];var cv=document.createElement("canvas");cv.className="cell-canvas";cv.width=88;cv.height=88;var c=cv.getContext("2d");c.fillStyle="#94a3b8";c.fillRect(0,0,88,88);c.fillStyle="#334155";c.font="bold 11px Arial";c.textAlign="center";c.fillText("SKRAB",44,50);c.globalCompositeOperation="destination-out";c.lineWidth=24;c.lineCap="round";cell.appendChild(pd);cell.appendChild(cv);g.appendChild(cell);cellCanvases.push({canvas:cv,ctx:c,index:i});bindCell(i,function(idx){return function(){checkGrid(idx)}}(i))}}
+function checkGrid(i){if(cellRevealed[i]||gameWon)return;var o=cellCanvases[i],d=o.ctx.getImageData(0,0,88,88),t=0;for(var j=3;j<d.data.length;j+=4)if(d.data[j]===0)t++;if(t/(88*88)>.4){cellRevealed[i]=true;o.ctx.clearRect(0,0,88,88);var w=check3();if(w!==null){gameWon=true;for(var k=0;k<9;k++)if(gridPrizes[k]===w&&cellRevealed[k])document.getElementById("prize-"+k).classList.add("win-highlight");showResult(true,"3 × "+w+" kr!",w)}else if(cellRevealed.every(function(v){return v}))showResult(false,"Bedre held",0)}}
+function check3(){var L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];for(var i=0;i<L.length;i++){var l=L[i];if(cellRevealed[l[0]]&&cellRevealed[l[1]]&&cellRevealed[l[2]]){var a=gridPrizes[l[0]];if(a===gridPrizes[l[1]]&&a===gridPrizes[l[2]]&&(a===10||a===20||a===50))return a}}return null}
+function startChestsGame(){chestPrizes=[];cellRevealed=[false,false,false,false];gameWon=false;cellCanvases=[];if(isFirstPlay){chestPrizes=[50,50,"Tom",10];shuffle(chestPrizes)}else{for(var i=0;i<4;i++){var r=Math.random();chestPrizes.push(r<.55?"Tom":r<.72?10:r<.85?20:r<.97?50:75)}}var g=document.getElementById("chests-grid");g.innerHTML="";for(var i=0;i<4;i++){var cell=document.createElement("div");cell.className="chest-cell";var pd=document.createElement("div");pd.className="cell-prize";pd.id="chest-prize-"+i;pd.textContent=typeof chestPrizes[i]==="number"?chestPrizes[i]+" kr":chestPrizes[i];var cv=document.createElement("canvas");cv.className="cell-canvas";cv.width=125;cv.height=105;var c=cv.getContext("2d");c.fillStyle="#a16207";c.fillRect(0,0,125,105);c.fillStyle="#fef3c7";c.font="bold 13px Arial";c.textAlign="center";c.fillText("📦 SKRAB",62,58);c.globalCompositeOperation="destination-out";c.lineWidth=28;c.lineCap="round";cell.appendChild(pd);cell.appendChild(cv);g.appendChild(cell);cellCanvases.push({canvas:cv,ctx:c,index:i});bindCell(i,function(idx){return function(){checkChest(idx)}}(i))}}
+function checkChest(i){if(cellRevealed[i]||gameWon)return;var o=cellCanvases[i],d=o.ctx.getImageData(0,0,125,105),t=0;for(var j=3;j<d.data.length;j+=4)if(d.data[j]===0)t++;if(t/(125*105)>.38){cellRevealed[i]=true;o.ctx.clearRect(0,0,125,105);var counts={};for(var k=0;k<4;k++)if(cellRevealed[k]&&typeof chestPrizes[k]==="number")counts[chestPrizes[k]]=(counts[chestPrizes[k]]||0)+1;for(var n in counts){if(counts[n]>=2){gameWon=true;for(var k=0;k<4;k++)if(chestPrizes[k]==n&&cellRevealed[k])document.getElementById("chest-prize-"+k).classList.add("win-highlight");showResult(true,"2 × "+n+" kr!",+n);return}}if(cellRevealed.every(function(v){return v})&&!gameWon)showResult(false,"Bedre held",0)}}
+var plinkoBall,plinkoPegs,plinkoSlots,plinkoAnimating,plinkoCtx,plinkoBar,plinkoBarId,PW=300,PH=380,PP=[0,5,10,15,25,15,10,5,0];
+function startPlinkoGame(){var c=document.getElementById("plinko-canvas");c.width=PW;c.height=PH;plinkoCtx=c.getContext("2d");plinkoAnimating=false;plinkoBall=null;plinkoBar={x:20,w:55,speed:1.8,dir:1};document.getElementById("plinko-drop-btn").disabled=false;document.getElementById("plinko-drop-btn").textContent="Drop bold";plinkoPegs=[];for(var r=0;r<7;r++){var cols=r%2?7:6,sx=(PW-(cols-1)*34)/2;for(var col=0;col<cols;col++)plinkoPegs.push({x:sx+col*34,y:40+r*32,r:4})}plinkoSlots=[];var sw=PW/9;for(var i=0;i<9;i++)plinkoSlots.push({x:i*sw,w:sw,prize:PP[i]});if(plinkoBarId)cancelAnimationFrame(plinkoBarId);(function bar(){if(!document.getElementById("plinko-area")||document.getElementById("plinko-area").style.display==="none")return;plinkoBar.x+=plinkoBar.speed*plinkoBar.dir;if(plinkoBar.x<4){plinkoBar.x=4;plinkoBar.dir=1}if(plinkoBar.x+plinkoBar.w>PW-4){plinkoBar.x=PW-4-plinkoBar.w;plinkoBar.dir=-1}if(!plinkoAnimating)drawPlinko();plinkoBarId=requestAnimationFrame(bar)})()}
+function drawPlinko(hi){if(hi===undefined)hi=-1;if(!plinkoCtx)return;var ctx=plinkoCtx;ctx.fillStyle="#0f172a";ctx.fillRect(0,0,PW,PH);plinkoPegs.forEach(function(p){ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle="#94a3b8";ctx.fill()});ctx.fillStyle="#ef4444";ctx.fillRect(plinkoBar.x,PH-65,plinkoBar.w,10);var sy=PH-45;plinkoSlots.forEach(function(s,i){ctx.fillStyle=i===hi?(s.prize>0?"#22c55e":"#475569"):(s.prize>=25?"#f59e0b":s.prize>0?"#3b82f6":"#334155");ctx.fillRect(s.x+1,sy,s.w-2,45);ctx.fillStyle="#fff";ctx.font="bold 10px Arial";ctx.textAlign="center";ctx.fillText(s.prize||"0",s.x+s.w/2,sy+26)});if(plinkoBall){ctx.beginPath();ctx.arc(plinkoBall.x,plinkoBall.y,7,0,Math.PI*2);ctx.fillStyle="#fbbf24";ctx.fill()}}
+function dropPlinkoBall(){if(plinkoAnimating)return;plinkoAnimating=true;document.getElementById("plinko-drop-btn").disabled=true;var ts;if(isFirstPlay)ts=PP.indexOf(15);else{var w=[26,14,10,8,3,8,10,14,26],r=Math.random()*w.reduce(function(a,b){return a+b},0);ts=0;for(var i=0;i<w.length;i++){r-=w[i];if(r<=0){ts=i;break}}}var sw=PW/9,tx=plinkoSlots[ts].x+sw/2;plinkoBall={x:PW/2,y:18,vx:(Math.random()-.5),vy:.3};var f=0,blk=false;(function step(){f++;plinkoBall.vy+=.16;plinkoBall.vx+=(tx-plinkoBall.x)*.01;plinkoBall.x+=plinkoBall.vx;plinkoBall.y+=plinkoBall.vy;plinkoPegs.forEach(function(p){var dx=plinkoBall.x-p.x,dy=plinkoBall.y-p.y,d=Math.sqrt(dx*dx+dy*dy)||.01;if(d<11){var nx=dx/d,ny=dy/d;plinkoBall.x=p.x+nx*11;plinkoBall.y=p.y+ny*11;var dot=plinkoBall.vx*nx+plinkoBall.vy*ny;plinkoBall.vx=(plinkoBall.vx-2*dot*nx)*.55;plinkoBall.vy=(plinkoBall.vy-2*dot*ny)*.55}});if(plinkoBall.x<8){plinkoBall.x=8;plinkoBall.vx=Math.abs(plinkoBall.vx)}if(plinkoBall.x>PW-8){plinkoBall.x=PW-8;plinkoBall.vx=-Math.abs(plinkoBall.vx)}var by=PH-65;if(!blk&&plinkoBall.y>by-8&&plinkoBall.y<by+12&&plinkoBall.x>plinkoBar.x&&plinkoBall.x<plinkoBar.x+plinkoBar.w){blk=true;plinkoBall.vy=-2.5;plinkoBall.vx+=plinkoBar.dir;setTimeout(function(){blk=false},150)}if(plinkoBall.y>PH-40||f>300){plinkoAnimating=false;var prize=PP[ts];drawPlinko(ts);if(prize>0)showResult(true,"Plinko: "+prize+" kr!",prize);else showResult(false,"0 kr",0);document.getElementById("plinko-drop-btn").textContent="Færdig";return}drawPlinko();requestAnimationFrame(step)})()}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}}
+function bindCell(i,cb){var canvas=cellCanvases[i].canvas;canvas.onmousedown=function(e){currentCell=cellCanvases[i];startDraw(e,currentCell.ctx,currentCell.canvas,cb)};canvas.onmousemove=function(e){if(currentCell&&currentCell.index===i)draw(e,currentCell.ctx,currentCell.canvas,cb)};canvas.onmouseup=endDraw;canvas.onmouseleave=endDraw;canvas.ontouchstart=function(e){e.preventDefault();currentCell=cellCanvases[i];startDraw(e.touches[0],currentCell.ctx,currentCell.canvas,cb)};canvas.ontouchmove=function(e){e.preventDefault();if(currentCell&&currentCell.index===i)draw(e.touches[0],currentCell.ctx,currentCell.canvas,cb)};canvas.ontouchend=endDraw}
+function getPos(e,c){var r=c.getBoundingClientRect();return{x:(e.clientX-r.left)*(c.width/r.width),y:(e.clientY-r.top)*(c.height/r.height)}}
+function startDraw(e,ctx,c,cb){isDrawing=true;var p=getPos(e,c);ctx.beginPath();ctx.moveTo(p.x,p.y)}
+function draw(e,ctx,c,cb){if(!isDrawing)return;var p=getPos(e,c);ctx.lineTo(p.x,p.y);ctx.stroke();if(cb)cb()}
+function endDraw(){isDrawing=false;currentCell=null}
+
+var flappyRunning=false,flappyAnim=null,flappyScore=0,flappyBird,flappyPipes,flappyDead;
+function startFlappy(){flappyRunning=false;flappyScore=0;document.getElementById("flappy-score").textContent="Score: 0";document.getElementById("flappy-start-btn").disabled=false;document.getElementById("flappy-start-btn").textContent="Start";document.getElementById("result-text").textContent="";var c=document.getElementById("flappy-canvas"),ctx=c.getContext("2d");ctx.fillStyle="#70c5ce";ctx.fillRect(0,0,300,400);ctx.fillStyle="#fff";ctx.font="bold 16px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,200);c.onclick=function(){if(flappyRunning)flappyBird.vy=-5.2};c.ontouchstart=function(e){e.preventDefault();if(flappyRunning)flappyBird.vy=-5.2}}
+function flappyStart(){if(flappyRunning)return;flappyRunning=true;flappyDead=false;flappyScore=0;flappyBird={x:70,y:200,vy:0,r:12};flappyPipes=[];document.getElementById("flappy-start-btn").disabled=true;document.getElementById("flappy-start-btn").textContent="Spiller...";var c=document.getElementById("flappy-canvas"),ctx=c.getContext("2d"),frame=0;
+function spawn(){var gap=110,top=40+Math.random()*160;flappyPipes.push({x:320,top:top,gap:gap,passed:false})}
+function loop(){if(!flappyRunning)return;frame++;flappyBird.vy+=0.28;flappyBird.y+=flappyBird.vy;if(frame%90===0)spawn();for(var i=flappyPipes.length-1;i>=0;i--){flappyPipes[i].x-=2.4;if(!flappyPipes[i].passed&&flappyPipes[i].x+40<flappyBird.x){flappyPipes[i].passed=true;flappyScore++;document.getElementById("flappy-score").textContent="Score: "+flappyScore+" (+"+flappyScore+" kr)";if(navigator.vibrate)navigator.vibrate(15)}if(flappyPipes[i].x<-50)flappyPipes.splice(i,1)}
+for(var i=0;i<flappyPipes.length;i++){var p=flappyPipes[i];if(flappyBird.x+flappyBird.r>p.x&&flappyBird.x-flappyBird.r<p.x+40){if(flappyBird.y-flappyBird.r<p.top||flappyBird.y+flappyBird.r>p.top+p.gap){flappyDead=true}}}
+if(flappyBird.y>400-flappyBird.r||flappyBird.y<flappyBird.r)flappyDead=true;
+ctx.fillStyle="#70c5ce";ctx.fillRect(0,0,300,400);ctx.fillStyle="#5a8f3c";ctx.fillRect(0,380,300,20);flappyPipes.forEach(function(p){ctx.fillStyle="#5a8f3c";ctx.fillRect(p.x,0,40,p.top);ctx.fillRect(p.x,p.top+p.gap,40,400-(p.top+p.gap));ctx.fillStyle="#73bf2e";ctx.fillRect(p.x-2,p.top-16,44,16);ctx.fillRect(p.x-2,p.top+p.gap,44,16)});ctx.beginPath();ctx.arc(flappyBird.x,flappyBird.y,flappyBird.r,0,Math.PI*2);ctx.fillStyle="#fbbf24";ctx.fill();ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(flappyBird.x+4,flappyBird.y-3,3,0,Math.PI*2);ctx.fill();
+if(flappyDead){flappyRunning=false;document.getElementById("flappy-start-btn").disabled=false;document.getElementById("flappy-start-btn").textContent="Færdig";showResult(flappyScore>0,"Flappy: "+flappyScore+" rør = "+flappyScore+" kr!",flappyScore);return}
+flappyAnim=requestAnimationFrame(loop)}
+loop()}
+var snakeRunning=false,snakeAnim=null,snakeScore=0,snake,snakeDir,snakeFood,snakeGrid=15,snakeCell=20;
+function startSnake(){snakeRunning=false;snakeScore=0;document.getElementById("snake-score").textContent="Æbler: 0";document.getElementById("snake-start-btn").disabled=false;document.getElementById("snake-start-btn").textContent="Start";document.getElementById("result-text").textContent="";var c=document.getElementById("snake-canvas"),ctx=c.getContext("2d");ctx.fillStyle="#0f172a";ctx.fillRect(0,0,300,300);ctx.fillStyle="#fff";ctx.font="bold 16px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,150);
+document.onkeydown=function(e){if(!snakeRunning)return;if(e.key==="ArrowUp"&&snakeDir.y===0)snakeDir={x:0,y:-1};if(e.key==="ArrowDown"&&snakeDir.y===0)snakeDir={x:0,y:1};if(e.key==="ArrowLeft"&&snakeDir.x===0)snakeDir={x:-1,y:0};if(e.key==="ArrowRight"&&snakeDir.x===0)snakeDir={x:1,y:0}};
+var tx=0,ty=0;c.ontouchstart=function(e){e.preventDefault();tx=e.touches[0].clientX;ty=e.touches[0].clientY};c.ontouchend=function(e){if(!snakeRunning)return;var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;if(Math.abs(dx)>Math.abs(dy)){if(dx>20&&snakeDir.x===0)snakeDir={x:1,y:0};if(dx<-20&&snakeDir.x===0)snakeDir={x:-1,y:0}}else{if(dy>20&&snakeDir.y===0)snakeDir={x:0,y:1};if(dy<-20&&snakeDir.y===0)snakeDir={x:0,y:-1}}}}
+function snakeStart(){if(snakeRunning)return;snakeRunning=true;snakeScore=0;snake=[{x:7,y:7},{x:6,y:7},{x:5,y:7}];snakeDir={x:1,y:0};snakeFood={x:10,y:10};document.getElementById("snake-start-btn").disabled=true;document.getElementById("snake-start-btn").textContent="Spiller...";var c=document.getElementById("snake-canvas"),ctx=c.getContext("2d"),tick=0;
+function placeFood(){do{snakeFood={x:Math.floor(Math.random()*snakeGrid),y:Math.floor(Math.random()*snakeGrid)}}while(snake.some(function(s){return s.x===snakeFood.x&&s.y===snakeFood.y}))}
+function loop(){if(!snakeRunning)return;tick++;if(tick%8===0){var head={x:snake[0].x+snakeDir.x,y:snake[0].y+snakeDir.y};if(head.x<0||head.y<0||head.x>=snakeGrid||head.y>=snakeGrid||snake.some(function(s){return s.x===head.x&&s.y===head.y})){snakeRunning=false;document.getElementById("snake-start-btn").disabled=false;document.getElementById("snake-start-btn").textContent="Færdig";showResult(snakeScore>0,"Snake: "+snakeScore+" æbler = "+snakeScore+" kr!",snakeScore);return}snake.unshift(head);if(head.x===snakeFood.x&&head.y===snakeFood.y){snakeScore++;document.getElementById("snake-score").textContent="Æbler: "+snakeScore+" (+"+snakeScore+" kr)";placeFood();if(navigator.vibrate)navigator.vibrate(20)}else snake.pop()}
+ctx.fillStyle="#0f172a";ctx.fillRect(0,0,300,300);ctx.fillStyle="#ef4444";ctx.fillRect(snakeFood.x*snakeCell+2,snakeFood.y*snakeCell+2,snakeCell-4,snakeCell-4);snake.forEach(function(s,i){ctx.fillStyle=i===0?"#4ade80":"#22c55e";ctx.fillRect(s.x*snakeCell+1,s.y*snakeCell+1,snakeCell-2,snakeCell-2)});snakeAnim=requestAnimationFrame(loop)}
+loop()}
+
+
+var catchRunning=false,catchScore=0,catchBasket,catchCoins,catchTime,catchAnim;
+function startCatch(){
+  catchRunning=false;catchScore=0;
+  document.getElementById("catch-score").textContent="Mønter: 0 · Tid: 20";
+  document.getElementById("catch-start-btn").disabled=false;
+  document.getElementById("catch-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d");
+  ctx.fillStyle="#1e3a5f";ctx.fillRect(0,0,300,400);
+  ctx.fillStyle="#fff";ctx.font="bold 18px Arial";ctx.textAlign="center";ctx.fillText("Tryk Start",150,200);
+}
+function catchStart(){
+  if(catchRunning)return;
+  catchRunning=true;catchScore=0;catchTime=20;
+  catchBasket={x:120,w:70,y:360};catchCoins=[];
+  document.getElementById("catch-start-btn").disabled=true;
+  document.getElementById("catch-start-btn").textContent="Spiller...";
+  var c=document.getElementById("catch-canvas"),ctx=c.getContext("2d"),frame=0,last=Date.now();
+  function setX(clientX){
+    var rect=c.getBoundingClientRect();
+    var x=(clientX-rect.left)*(300/rect.width);
+    catchBasket.x=Math.max(0,Math.min(300-catchBasket.w,x-catchBasket.w/2));
+  }
+  c.onmousemove=function(e){if(catchRunning)setX(e.clientX)};
+  c.ontouchmove=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  c.ontouchstart=function(e){e.preventDefault();if(catchRunning)setX(e.touches[0].clientX)};
+  function loop(){
+    if(!catchRunning)return;
+    frame++;
+    var now=Date.now();
+    if(now-last>=1000){
+      catchTime--;last=now;
+      if(catchTime<=0){
+        catchRunning=false;
+        document.getElementById("catch-start-btn").disabled=false;
+        document.getElementById("catch-start-btn").textContent="Færdig";
+        showResult(catchScore>0,"Catch: "+catchScore+" mønter = "+catchScore+" kr!",catchScore);
+        return;
+      }
+    }
+    if(frame%40===0)catchCoins.push({x:20+Math.random()*260,y:-20,vy:1.4+Math.random()*1,r:12});
+    for(var i=catchCoins.length-1;i>=0;i--){
+      catchCoins[i].y+=catchCoins[i].vy;
+      if(catchCoins[i].y+catchCoins[i].r>catchBasket.y&&catchCoins[i].y<catchBasket.y+30&&
+         catchCoins[i].x>catchBasket.x&&catchCoins[i].x<catchBasket.x+catchBasket.w){
+        catchScore++;catchCoins.splice(i,1);
+        if(navigator.vibrate)navigator.vibrate(10);
+        continue;
+      }
+      if(catchCoins[i].y>420)catchCoins.splice(i,1);
+    }
+    document.getElementById("catch-score").textContent="Mønter: "+catchScore+" · Tid: "+catchTime;
+    var g=ctx.createLinearGradient(0,0,0,400);g.addColorStop(0,"#1e3a5f");g.addColorStop(1,"#0f172a");
+    ctx.fillStyle=g;ctx.fillRect(0,0,300,400);
+    catchCoins.forEach(function(coin){
+      ctx.beginPath();ctx.arc(coin.x,coin.y,coin.r,0,Math.PI*2);
+      ctx.fillStyle="#fbbf24";ctx.fill();
+    });
+    ctx.fillStyle="#e8b923";ctx.fillRect(catchBasket.x,catchBasket.y,catchBasket.w,24);
+    ctx.fillStyle="#3d0000";ctx.fillRect(catchBasket.x+4,catchBasket.y+4,catchBasket.w-8,16);
+    catchAnim=requestAnimationFrame(loop);
+  }
+  loop();
+}
+var tapRunning=false,tapCount=0,tapTimeLeft=0,tapTimerId=null;
+function startTap(){
+  tapRunning=false;tapCount=0;
+  document.getElementById("tap-count").textContent="0";
+  document.getElementById("tap-earn").textContent="+0 kr";
+  document.getElementById("tap-timer").textContent="Tid: 8";
+  document.getElementById("tap-start-btn").disabled=false;
+  document.getElementById("tap-start-btn").textContent="Start";
+  document.getElementById("result-text").textContent="";
+}
+function tapHit(){
+  if(!tapRunning)return;
+  tapCount++;
+  document.getElementById("tap-count").textContent=String(tapCount);
+  document.getElementById("tap-earn").textContent="+"+Math.floor(tapCount/5)+" kr";
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function tapStart(){
+  if(tapRunning)return;
+  tapRunning=true;tapCount=0;tapTimeLeft=8;
+  document.getElementById("tap-start-btn").disabled=true;
+  document.getElementById("tap-start-btn").textContent="Spiller...";
+  document.getElementById("tap-count").textContent="0";
+  document.getElementById("tap-earn").textContent="+0 kr";
+  document.getElementById("tap-timer").textContent="Tid: 8";
+  if(tapTimerId)clearInterval(tapTimerId);
+  tapTimerId=setInterval(function(){
+    tapTimeLeft--;
+    document.getElementById("tap-timer").textContent="Tid: "+tapTimeLeft;
+    if(tapTimeLeft<=0){
+      clearInterval(tapTimerId);tapRunning=false;
+      var win=Math.floor(tapCount/5);
+      document.getElementById("tap-start-btn").disabled=false;
+      document.getElementById("tap-start-btn").textContent="Færdig";
+      showResult(win>0,"Tap Race: "+tapCount+" taps = "+win+" kr!",win);
+    }
+  },1000);
+}
+function startDice(){
+  document.getElementById("dice-faces").textContent="🎲 🎲";
+  document.getElementById("dice-sum").textContent="";
+  document.getElementById("dice-roll-btn").disabled=false;
+  document.getElementById("dice-roll-btn").textContent="Slå";
+  document.getElementById("result-text").textContent="";
+}
+function diceRoll(){
+  var btn=document.getElementById("dice-roll-btn");
+  if(btn.disabled)return;
+  btn.disabled=true;btn.textContent="...";
+  var faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
+  var n=0;
+  var iv=setInterval(function(){
+    var a=1+Math.floor(Math.random()*6),b=1+Math.floor(Math.random()*6);
+    document.getElementById("dice-faces").textContent=faces[a-1]+" "+faces[b-1];
+    n++;
+    if(n>12){
+      clearInterval(iv);
+      var sum=a+b;
+      document.getElementById("dice-sum").textContent="Sum: "+sum;
+      btn.textContent="Færdig";
+      // payout: sum 8-9 = 8, 10-11 = 12, 12 = 20, else 0
+      var win=0;
+      if(sum>=12)win=20;else if(sum>=10)win=12;else if(sum>=8)win=8;
+      if(win>0)showResult(true,"Terning "+sum+" = "+win+" kr!",win);
+      else showResult(false,"Terning "+sum+" – ingen gevinst",0);
+    }
+  },80);
+}
+
+
+var dwheelSlices=[
+  {label:"0 💎",color:"#475569",amount:0},
+  {label:"+3 💎",color:"#0ea5e9",amount:3},
+  {label:"+5 💎",color:"#0284c7",amount:5},
+  {label:"0 💎",color:"#64748b",amount:0},
+  {label:"+8 💎",color:"#38bdf8",amount:8},
+  {label:"+2 💎",color:"#0369a1",amount:2},
+  {label:"0 💎",color:"#475569",amount:0},
+  {label:"+15 💎",color:"#a855f7",amount:15}
+];
+var dwheelAngle=0,dwheelSpinning=false;
+function openDiamondWheel(){
+  document.getElementById("dwheel-overlay").classList.add("show");
+  document.getElementById("dwheel-result").textContent="";
+  document.getElementById("dwheel-spin-btn").disabled=false;
+  drawDWheel(0);
+}
+function drawDWheel(angle){
+  var c=document.getElementById("dwheel-canvas");if(!c)return;
+  var ctx=c.getContext("2d"),cx=120,cy=120,r=110,slice=Math.PI*2/dwheelSlices.length;
+  ctx.clearRect(0,0,240,240);ctx.save();ctx.translate(cx,cy);ctx.rotate(angle);
+  for(var i=0;i<dwheelSlices.length;i++){
+    ctx.beginPath();ctx.moveTo(0,0);ctx.arc(0,0,r,i*slice,(i+1)*slice);
+    ctx.fillStyle=dwheelSlices[i].color;ctx.fill();
+    ctx.strokeStyle="#e8b923";ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.rotate(i*slice+slice/2);ctx.textAlign="center";ctx.fillStyle="#fff";ctx.font="bold 12px Arial";
+    ctx.fillText(dwheelSlices[i].label,r*0.62,4);ctx.restore();
+  }
+  ctx.restore();
+  ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fillStyle="#1a0000";ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,8,0,Math.PI*2);ctx.fillStyle="#38bdf8";ctx.fill();
+}
+function spinDiamondWheel(){
+  if(dwheelSpinning)return;
+  if(diamondBalance<10){alert("Du skal bruge 10 💎");return}
+  updateDiamonds(-10);refreshShopUI();
+  dwheelSpinning=true;document.getElementById("dwheel-spin-btn").disabled=true;
+  // house edge: more zeros
+  var rand=Math.random(),ri;
+  if(rand<0.28)ri=0;else if(rand<0.50)ri=3;else if(rand<0.68)ri=6;
+  else if(rand<0.80)ri=5;else if(rand<0.90)ri=1;else if(rand<0.96)ri=2;
+  else if(rand<0.99)ri=4;else ri=7;
+  var slice=Math.PI*2/dwheelSlices.length,target=Math.PI*2*5+(Math.PI*1.5-(ri*slice+slice/2));
+  var cur=dwheelAngle,t0=performance.now();
+  (function anim(now){
+    var t=Math.min((now-t0)/4000,1);
+    dwheelAngle=cur+(target-cur)*(1-Math.pow(1-t,3));
+    drawDWheel(dwheelAngle);
+    if(t<1)requestAnimationFrame(anim);
+    else{
+      dwheelSpinning=false;
+      var res=dwheelSlices[ri],el=document.getElementById("dwheel-result");
+      if(res.amount>0){
+        el.textContent="Du vandt "+res.amount+" 💎";el.style.color="#38bdf8";
+        updateDiamonds(res.amount);refreshShopUI();
+      } else {
+        el.textContent="Ingen gevinst";el.style.color="#f87171";
+      }
+      document.getElementById("dwheel-spin-btn").disabled=false;
+    }
+  })(t0);
+}
+
+drawWheel(0);
+</script>
+</body>
+</html>
